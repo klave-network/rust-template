@@ -15,9 +15,3 @@ package = "component:rust-template"
 
 [package.metadata.component.target.dependencies]
 "klave:sdk" = { path = "../../sdk/wit" }
-
-[profile.release]
-lto = true
-# Tell `rustc` to optimize for small code size.
-opt-level = "s"
-strip = true
