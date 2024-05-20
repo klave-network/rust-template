@@ -1,0 +1,35 @@
+package klave:sdk;
+
+interface sdk {
+    // for now no types : keep same interface as pure host-provided native calls
+
+    // should only be called by register-routes
+    add-user-query: func(query-name: string);
+    add-user-transaction: func(transaction-name: string);
+
+    // normal sdk calls
+    notify: func(msg: string) -> s32;
+    notify-error: func(msg: string) -> s32;
+    on-success-notify: func(msg: string) -> s32;
+    query-context: func(param: string) -> string;
+    read-ledger: func(table: string, key: list<u8>) -> list<u8>;
+    write-ledger: func(table: string, key: list<u8>, value: list<u8>) -> s32;
+    remove-from-ledger: func(table: string, key: list<u8>) -> s32;
+    load-lightgbm-model: func(name: string, model: string) -> s32;
+    unload-lightgbm-model: func(name: string) -> s32;
+    infer-from-lightgbm-model: func(name: string, data: list<u8>, len: s32) -> list<u8>;
+    key-exists: func(key-name: string) -> s32;
+    generate-encryption-key: func(key-name: string) -> s32;
+    encrypt: func(key-name: string, plain-txt: list<u8>) -> list<u8>;
+    decrypt: func(key-name: string, cipher-txt: list<u8>) -> list<u8>;
+    generate-signing-key: func(key-name: string) -> s32;
+    get-public-key: func(key-name: string) -> list<u8>;
+    sign: func(key-name: string, txt: list<u8>) -> list<u8>;
+    verify: func(key-name: string, txt: list<u8>, signature: list<u8>) -> s32;
+    digest: func(txt: list<u8>) -> list<u8>;
+    get-random-bytes: func(len: s32) -> list<u8>;
+    https-query: func(request: string) -> string;
+    start-recording: func() -> s32;
+    stop-recording: func() -> s32;
+    cancel-transaction: func() -> s32;
+}

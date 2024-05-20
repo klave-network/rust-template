@@ -1,0 +1,10 @@
+package component:rust-template;
+
+/// An example world for the component to target.
+world example {
+    import klave:sdk/sdk;
+    export register-routes: func();
+    export load-from-ledger: func(cmd: string);
+    export insert-in-ledger: func(cmd: string);
+    export ping: func();
+}
