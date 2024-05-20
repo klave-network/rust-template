@@ -14,7 +14,7 @@ crate-type = ["cdylib"]
 package = "component:rust-template"
 
 [package.metadata.component.target.dependencies]
-"klave:sdk" = { path = "sdk/wit" }
+"klave:sdk" = { path = "../../sdk/wit" }
 
 [profile.release]
 lto = true
