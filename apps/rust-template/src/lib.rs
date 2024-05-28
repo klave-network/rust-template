@@ -14,7 +14,13 @@ impl Guest for Component {
     }
 
     fn load_from_ledger(cmd: String){
-        let res = sdk::read_ledger("my_table", cmd.as_bytes());
+        sdk::notify(&format!("received command {}", cmd));
+        let Ok(v) = serde_json::from_str::<Value>(&cmd) else {
+            sdk::notify_error(&format!("failed to parse '{}' as json", cmd));
+            return
+        };
+        let key = v["key"].as_str().unwrap().as_bytes();
+        let res = sdk::read_ledger("my_table", key);
         let msg = if res.is_empty() {
             format!("the key '{}' was not found in table my_table", cmd)
         } else {
