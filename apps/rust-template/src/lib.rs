@@ -55,7 +55,7 @@ impl Guest for Component {
     }
 
     fn ping2() {
-        sdk::notify("pang");
+        sdk::notify("pang2");
     }
 }
 

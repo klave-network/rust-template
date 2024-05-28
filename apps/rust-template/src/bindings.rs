@@ -32,11 +32,19 @@ pub unsafe fn _export_ping_cabi<T: Guest>() {
     _rt::run_ctors_once();
     T::ping();
 }
+#[doc(hidden)]
+#[allow(non_snake_case)]
+pub unsafe fn _export_ping2_cabi<T: Guest>() {
+    #[cfg(target_arch = "wasm32")]
+    _rt::run_ctors_once();
+    T::ping2();
+}
 pub trait Guest {
     fn register_routes();
     fn load_from_ledger(cmd: _rt::String);
     fn insert_in_ledger(cmd: _rt::String);
     fn ping();
+    fn ping2();
 }
 #[doc(hidden)]
 
@@ -58,6 +66,10 @@ macro_rules! __export_world_example_cabi{
     #[export_name = "ping"]
     unsafe extern "C" fn export_ping() {
       $($path_to_types)*::_export_ping_cabi::<$ty>()
+    }
+    #[export_name = "ping2"]
+    unsafe extern "C" fn export_ping2() {
+      $($path_to_types)*::_export_ping2_cabi::<$ty>()
     }
   };);
 }
@@ -906,9 +918,9 @@ pub(crate) use __export_example_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.24.0:example:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1111] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xd9\x07\x01A\x02\x01\
-A\x08\x01B/\x01@\x01\x0aquery-names\x01\0\x04\0\x0eadd-user-query\x01\0\x01@\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1121] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xe3\x07\x01A\x02\x01\
+A\x09\x01B/\x01@\x01\x0aquery-names\x01\0\x04\0\x0eadd-user-query\x01\0\x01@\x01\
 \x10transaction-names\x01\0\x04\0\x14add-user-transaction\x01\x01\x01@\x01\x03ms\
 gs\0z\x04\0\x06notify\x01\x02\x04\0\x0cnotify-error\x01\x02\x04\0\x11on-success-\
 notify\x01\x02\x01@\x01\x05params\0s\x04\0\x0dquery-context\x01\x03\x01p}\x01@\x02\
@@ -928,9 +940,10 @@ et-random-bytes\x01\x12\x01@\x01\x07requests\0s\x04\0\x0bhttps-query\x01\x13\x01
 @\0\0z\x04\0\x0fstart-recording\x01\x14\x04\0\x0estop-recording\x01\x14\x04\0\x12\
 cancel-transaction\x01\x14\x03\x01\x0dklave:sdk/sdk\x05\0\x01@\0\x01\0\x04\0\x0f\
 register-routes\x01\x01\x01@\x01\x03cmds\x01\0\x04\0\x10load-from-ledger\x01\x02\
-\x04\0\x10insert-in-ledger\x01\x02\x04\0\x04ping\x01\x01\x04\x01\x1fcomponent:ru\
-st-template/example\x04\0\x0b\x0d\x01\0\x07example\x03\0\0\0G\x09producers\x01\x0c\
-processed-by\x02\x0dwit-component\x070.202.0\x10wit-bindgen-rust\x060.24.0";
+\x04\0\x10insert-in-ledger\x01\x02\x04\0\x04ping\x01\x01\x04\0\x05ping2\x01\x01\x04\
+\x01\x1fcomponent:rust-template/example\x04\0\x0b\x0d\x01\0\x07example\x03\0\0\0\
+G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.202.0\x10wit-bindge\
+n-rust\x060.24.0";
 
 #[inline(never)]
 #[doc(hidden)]
