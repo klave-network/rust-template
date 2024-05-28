@@ -43,8 +43,8 @@ impl Guest for Component {
         sdk::write_ledger("my_table", key, value);
         let result_as_json = json!({
             "inserted": true,
-            "key": v["key"].as_str().unwrap(),
-            "value": v["value"].as_str().unwrap()
+            "key": key,
+            "value": value
             });
         sdk::notify(&result_as_json.to_string());
     }
