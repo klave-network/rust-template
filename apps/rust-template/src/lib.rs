@@ -12,6 +12,7 @@ impl Guest for Component {
         sdk::add_user_query("load-from-ledger");
         sdk::add_user_transaction("insert-in-ledger");
         sdk::add_user_query("ping");
+        sdk::add_user_query("ping2");
     }
 
     fn load_from_ledger(cmd: String){
@@ -51,6 +52,10 @@ impl Guest for Component {
 
     fn ping() {
         sdk::notify("pong");
+    }
+
+    fn ping2() {
+        sdk::notify("pang");
     }
 }
 
