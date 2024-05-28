@@ -3,6 +3,7 @@ mod bindings;
 
 use bindings::{Guest, klave::sdk::sdk};
 use serde_json::Value;
+use serde_json::json;
 struct Component;
 
 impl Guest for Component {
@@ -24,7 +25,10 @@ impl Guest for Component {
         let msg = if res.is_empty() {
             format!("the key '{}' was not found in table my_table", cmd)
         } else {
-            format!("the value of '{}' is '{}'", cmd, String::from_utf8(res).unwrap_or("!! utf8 parsing error !!".to_owned()))
+            let result_as_json = json!({
+                "value": String::from_utf8(res).unwrap_or("!! utf8 parsing error !!".to_owned()),
+            });
+            format!("{}", result_as_json.to_string())
         };
         sdk::notify(&msg);
     }
