@@ -22,6 +22,3 @@ this also create a `target` folder with the built wasm files in  `target\wasm32-
 
 5 - When the bindings are already created, it is possible to build with:
 `cargo build --target wasm32-unknown-unknown --release`
-
-Observation: 
-- It seems possible to reference a wit from git in the toml file: ex: spin-sdk = { git = "https://github.com/fermyon/spin", tag = "v2.1.0" }
