@@ -23,10 +23,14 @@ interface sdk {
     encrypt: func(key-name: string, plain-txt: list<u8>) -> list<u8>;
     decrypt: func(key-name: string, cipher-txt: list<u8>) -> list<u8>;
     generate-signing-key: func(key-name: string) -> s32;
-    get-public-key: func(key-name: string) -> list<u8>;
+    generate-key: func(key-name: string, algorithm: s32, extractable: s32, usages: list<u8>) -> s32;
+    get-public-key: func(key-name: string, key-format: s32) -> list<u8>;
+    import-verifying-key: func(key-name: string, public-key: list<u8>) -> s32;
+    import-key: func(key-name: string, key-format: s32, key-data: list<u8>, algorithm: s32, extractable: s32, usages: list<u8>) -> s32;
+    export-key: func(key-name: string, key-format: s32) -> list<u8>;
     sign: func(key-name: string, txt: list<u8>) -> list<u8>;
     verify: func(key-name: string, txt: list<u8>, signature: list<u8>) -> s32;
-    digest: func(txt: list<u8>) -> list<u8>;
+    digest: func(algorithm: s32, txt: list<u8>) -> list<u8>;
     get-random-bytes: func(len: s32) -> list<u8>;
     https-query: func(request: string) -> string;
     start-recording: func() -> s32;

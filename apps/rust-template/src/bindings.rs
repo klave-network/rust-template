@@ -553,7 +553,58 @@ pub mod klave {
                 }
             }
             #[allow(unused_unsafe, clippy::all)]
-            pub fn get_public_key(key_name: &str) -> _rt::Vec<u8> {
+            pub fn generate_key(
+                key_name: &str,
+                algorithm: i32,
+                extractable: i32,
+                usages: &[u8],
+            ) -> i32 {
+                unsafe {
+                    let vec0 = key_name;
+                    let ptr0 = vec0.as_ptr().cast::<u8>();
+                    let len0 = vec0.len();
+                    let vec1 = usages;
+                    let ptr1 = vec1.as_ptr().cast::<u8>();
+                    let len1 = vec1.len();
+
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "klave:sdk/sdk")]
+                    extern "C" {
+                        #[link_name = "generate-key"]
+                        fn wit_import(
+                            _: *mut u8,
+                            _: usize,
+                            _: i32,
+                            _: i32,
+                            _: *mut u8,
+                            _: usize,
+                        ) -> i32;
+                    }
+
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(
+                        _: *mut u8,
+                        _: usize,
+                        _: i32,
+                        _: i32,
+                        _: *mut u8,
+                        _: usize,
+                    ) -> i32 {
+                        unreachable!()
+                    }
+                    let ret = wit_import(
+                        ptr0.cast_mut(),
+                        len0,
+                        _rt::as_i32(&algorithm),
+                        _rt::as_i32(&extractable),
+                        ptr1.cast_mut(),
+                        len1,
+                    );
+                    ret
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            pub fn get_public_key(key_name: &str, key_format: i32) -> _rt::Vec<u8> {
                 unsafe {
                     #[repr(align(4))]
                     struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
@@ -566,14 +617,132 @@ pub mod klave {
                     #[link(wasm_import_module = "klave:sdk/sdk")]
                     extern "C" {
                         #[link_name = "get-public-key"]
-                        fn wit_import(_: *mut u8, _: usize, _: *mut u8);
+                        fn wit_import(_: *mut u8, _: usize, _: i32, _: *mut u8);
                     }
 
                     #[cfg(not(target_arch = "wasm32"))]
-                    fn wit_import(_: *mut u8, _: usize, _: *mut u8) {
+                    fn wit_import(_: *mut u8, _: usize, _: i32, _: *mut u8) {
                         unreachable!()
                     }
-                    wit_import(ptr0.cast_mut(), len0, ptr1);
+                    wit_import(ptr0.cast_mut(), len0, _rt::as_i32(&key_format), ptr1);
+                    let l2 = *ptr1.add(0).cast::<*mut u8>();
+                    let l3 = *ptr1.add(4).cast::<usize>();
+                    let len4 = l3;
+                    _rt::Vec::from_raw_parts(l2.cast(), len4, len4)
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            pub fn import_verifying_key(key_name: &str, public_key: &[u8]) -> i32 {
+                unsafe {
+                    let vec0 = key_name;
+                    let ptr0 = vec0.as_ptr().cast::<u8>();
+                    let len0 = vec0.len();
+                    let vec1 = public_key;
+                    let ptr1 = vec1.as_ptr().cast::<u8>();
+                    let len1 = vec1.len();
+
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "klave:sdk/sdk")]
+                    extern "C" {
+                        #[link_name = "import-verifying-key"]
+                        fn wit_import(_: *mut u8, _: usize, _: *mut u8, _: usize) -> i32;
+                    }
+
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8, _: usize, _: *mut u8, _: usize) -> i32 {
+                        unreachable!()
+                    }
+                    let ret = wit_import(ptr0.cast_mut(), len0, ptr1.cast_mut(), len1);
+                    ret
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            pub fn import_key(
+                key_name: &str,
+                key_format: i32,
+                key_data: &[u8],
+                algorithm: i32,
+                extractable: i32,
+                usages: &[u8],
+            ) -> i32 {
+                unsafe {
+                    let vec0 = key_name;
+                    let ptr0 = vec0.as_ptr().cast::<u8>();
+                    let len0 = vec0.len();
+                    let vec1 = key_data;
+                    let ptr1 = vec1.as_ptr().cast::<u8>();
+                    let len1 = vec1.len();
+                    let vec2 = usages;
+                    let ptr2 = vec2.as_ptr().cast::<u8>();
+                    let len2 = vec2.len();
+
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "klave:sdk/sdk")]
+                    extern "C" {
+                        #[link_name = "import-key"]
+                        fn wit_import(
+                            _: *mut u8,
+                            _: usize,
+                            _: i32,
+                            _: *mut u8,
+                            _: usize,
+                            _: i32,
+                            _: i32,
+                            _: *mut u8,
+                            _: usize,
+                        ) -> i32;
+                    }
+
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(
+                        _: *mut u8,
+                        _: usize,
+                        _: i32,
+                        _: *mut u8,
+                        _: usize,
+                        _: i32,
+                        _: i32,
+                        _: *mut u8,
+                        _: usize,
+                    ) -> i32 {
+                        unreachable!()
+                    }
+                    let ret = wit_import(
+                        ptr0.cast_mut(),
+                        len0,
+                        _rt::as_i32(&key_format),
+                        ptr1.cast_mut(),
+                        len1,
+                        _rt::as_i32(&algorithm),
+                        _rt::as_i32(&extractable),
+                        ptr2.cast_mut(),
+                        len2,
+                    );
+                    ret
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            pub fn export_key(key_name: &str, key_format: i32) -> _rt::Vec<u8> {
+                unsafe {
+                    #[repr(align(4))]
+                    struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
+                    let mut ret_area = RetArea([::core::mem::MaybeUninit::uninit(); 8]);
+                    let vec0 = key_name;
+                    let ptr0 = vec0.as_ptr().cast::<u8>();
+                    let len0 = vec0.len();
+                    let ptr1 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "klave:sdk/sdk")]
+                    extern "C" {
+                        #[link_name = "export-key"]
+                        fn wit_import(_: *mut u8, _: usize, _: i32, _: *mut u8);
+                    }
+
+                    #[cfg(not(target_arch = "wasm32"))]
+                    fn wit_import(_: *mut u8, _: usize, _: i32, _: *mut u8) {
+                        unreachable!()
+                    }
+                    wit_import(ptr0.cast_mut(), len0, _rt::as_i32(&key_format), ptr1);
                     let l2 = *ptr1.add(0).cast::<*mut u8>();
                     let l3 = *ptr1.add(4).cast::<usize>();
                     let len4 = l3;
@@ -661,7 +830,7 @@ pub mod klave {
                 }
             }
             #[allow(unused_unsafe, clippy::all)]
-            pub fn digest(txt: &[u8]) -> _rt::Vec<u8> {
+            pub fn digest(algorithm: i32, txt: &[u8]) -> _rt::Vec<u8> {
                 unsafe {
                     #[repr(align(4))]
                     struct RetArea([::core::mem::MaybeUninit<u8>; 8]);
@@ -674,14 +843,14 @@ pub mod klave {
                     #[link(wasm_import_module = "klave:sdk/sdk")]
                     extern "C" {
                         #[link_name = "digest"]
-                        fn wit_import(_: *mut u8, _: usize, _: *mut u8);
+                        fn wit_import(_: i32, _: *mut u8, _: usize, _: *mut u8);
                     }
 
                     #[cfg(not(target_arch = "wasm32"))]
-                    fn wit_import(_: *mut u8, _: usize, _: *mut u8) {
+                    fn wit_import(_: i32, _: *mut u8, _: usize, _: *mut u8) {
                         unreachable!()
                     }
-                    wit_import(ptr0.cast_mut(), len0, ptr1);
+                    wit_import(_rt::as_i32(&algorithm), ptr0.cast_mut(), len0, ptr1);
                     let l2 = *ptr1.add(0).cast::<*mut u8>();
                     let l3 = *ptr1.add(4).cast::<usize>();
                     let len4 = l3;
@@ -918,9 +1087,9 @@ pub(crate) use __export_example_impl as export;
 #[cfg(target_arch = "wasm32")]
 #[link_section = "component-type:wit-bindgen:0.24.0:example:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1121] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xe3\x07\x01A\x02\x01\
-A\x09\x01B/\x01@\x01\x0aquery-names\x01\0\x04\0\x0eadd-user-query\x01\0\x01@\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1359] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xd1\x09\x01A\x02\x01\
+A\x09\x01B6\x01@\x01\x0aquery-names\x01\0\x04\0\x0eadd-user-query\x01\0\x01@\x01\
 \x10transaction-names\x01\0\x04\0\x14add-user-transaction\x01\x01\x01@\x01\x03ms\
 gs\0z\x04\0\x06notify\x01\x02\x04\0\x0cnotify-error\x01\x02\x04\0\x11on-success-\
 notify\x01\x02\x01@\x01\x05params\0s\x04\0\x0dquery-context\x01\x03\x01p}\x01@\x02\
@@ -932,18 +1101,22 @@ load-lightgbm-model\x01\x08\x01@\x01\x04names\0z\x04\0\x15unload-lightgbm-model\
 del\x01\x0a\x01@\x01\x08key-names\0z\x04\0\x0akey-exists\x01\x0b\x04\0\x17genera\
 te-encryption-key\x01\x0b\x01@\x02\x08key-names\x09plain-txt\x04\0\x04\x04\0\x07\
 encrypt\x01\x0c\x01@\x02\x08key-names\x0acipher-txt\x04\0\x04\x04\0\x07decrypt\x01\
-\x0d\x04\0\x14generate-signing-key\x01\x0b\x01@\x01\x08key-names\0\x04\x04\0\x0e\
-get-public-key\x01\x0e\x01@\x02\x08key-names\x03txt\x04\0\x04\x04\0\x04sign\x01\x0f\
-\x01@\x03\x08key-names\x03txt\x04\x09signature\x04\0z\x04\0\x06verify\x01\x10\x01\
-@\x01\x03txt\x04\0\x04\x04\0\x06digest\x01\x11\x01@\x01\x03lenz\0\x04\x04\0\x10g\
-et-random-bytes\x01\x12\x01@\x01\x07requests\0s\x04\0\x0bhttps-query\x01\x13\x01\
-@\0\0z\x04\0\x0fstart-recording\x01\x14\x04\0\x0estop-recording\x01\x14\x04\0\x12\
-cancel-transaction\x01\x14\x03\x01\x0dklave:sdk/sdk\x05\0\x01@\0\x01\0\x04\0\x0f\
-register-routes\x01\x01\x01@\x01\x03cmds\x01\0\x04\0\x10load-from-ledger\x01\x02\
-\x04\0\x10insert-in-ledger\x01\x02\x04\0\x04ping\x01\x01\x04\0\x05ping2\x01\x01\x04\
-\x01\x1fcomponent:rust-template/example\x04\0\x0b\x0d\x01\0\x07example\x03\0\0\0\
-G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.202.0\x10wit-bindge\
-n-rust\x060.24.0";
+\x0d\x04\0\x14generate-signing-key\x01\x0b\x01@\x04\x08key-names\x09algorithmz\x0b\
+extractablez\x06usages\x04\0z\x04\0\x0cgenerate-key\x01\x0e\x01@\x02\x08key-name\
+s\x0akey-formatz\0\x04\x04\0\x0eget-public-key\x01\x0f\x01@\x02\x08key-names\x0a\
+public-key\x04\0z\x04\0\x14import-verifying-key\x01\x10\x01@\x06\x08key-names\x0a\
+key-formatz\x08key-data\x04\x09algorithmz\x0bextractablez\x06usages\x04\0z\x04\0\
+\x0aimport-key\x01\x11\x04\0\x0aexport-key\x01\x0f\x01@\x02\x08key-names\x03txt\x04\
+\0\x04\x04\0\x04sign\x01\x12\x01@\x03\x08key-names\x03txt\x04\x09signature\x04\0\
+z\x04\0\x06verify\x01\x13\x01@\x02\x09algorithmz\x03txt\x04\0\x04\x04\0\x06diges\
+t\x01\x14\x01@\x01\x03lenz\0\x04\x04\0\x10get-random-bytes\x01\x15\x01@\x01\x07r\
+equests\0s\x04\0\x0bhttps-query\x01\x16\x01@\0\0z\x04\0\x0fstart-recording\x01\x17\
+\x04\0\x0estop-recording\x01\x17\x04\0\x12cancel-transaction\x01\x17\x03\x01\x0d\
+klave:sdk/sdk\x05\0\x01@\0\x01\0\x04\0\x0fregister-routes\x01\x01\x01@\x01\x03cm\
+ds\x01\0\x04\0\x10load-from-ledger\x01\x02\x04\0\x10insert-in-ledger\x01\x02\x04\
+\0\x04ping\x01\x01\x04\0\x05ping2\x01\x01\x04\x01\x1fcomponent:rust-template/exa\
+mple\x04\0\x0b\x0d\x01\0\x07example\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\
+\x0dwit-component\x070.202.0\x10wit-bindgen-rust\x060.24.0";
 
 #[inline(never)]
 #[doc(hidden)]
