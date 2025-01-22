@@ -21,7 +21,10 @@ impl Guest for Component {
             return
         };
         let key = v["key"].as_str().unwrap().as_bytes();
-        let res = sdk::read_ledger("my_table", key);
+        let Ok(res) = sdk::read_ledger("my_table", key) else {
+            sdk::notify_error(&format!("failed to read from ledger: '{}'", cmd));
+            return
+        };
         let msg = if res.is_empty() {
             format!("the key '{}' was not found in table my_table", cmd)
         } else {
@@ -41,7 +44,15 @@ impl Guest for Component {
         };
         let key = v["key"].as_str().unwrap().as_bytes();
         let value = v["value"].as_str().unwrap().as_bytes();
-        sdk::write_ledger("my_table", key, value);
+        match sdk::write_ledger("my_table", key, value) {
+            Err(e) => {
+                sdk::notify_error(&format!("failed to write to ledger: '{}'", e));
+                sdk::cancel_transaction();
+                return
+            }
+            _ => {}
+        }
+
         let result_as_json = json!({
             "inserted": true,
             "key": key,
