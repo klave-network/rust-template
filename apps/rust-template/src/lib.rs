@@ -10,10 +10,8 @@ struct Component;
 impl Guest for Component {
 
     fn register_routes(){
-        klave::router::add_user_query("load-from-ledger");
-        klave::router::add_user_transaction("insert-in-ledger");
-        klave::router::add_user_query("ping");
-        klave::router::add_user_query("ping2");
+        klave::router::add_user_query("load_from_ledger");
+        klave::router::add_user_transaction("insert_in_ledger");
     }
 
     fn load_from_ledger(cmd: String){
@@ -60,14 +58,6 @@ impl Guest for Component {
             "value": value
             });
         klave::notifier::send_string(&result_as_json.to_string());
-    }
-
-    fn ping() {
-        klave::notifier::send_string("pong");
-    }
-
-    fn ping2() {
-        klave::notifier::send_string("pang2");
     }
 }
 

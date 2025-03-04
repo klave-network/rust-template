@@ -5,6 +5,4 @@ world rust-template {
     export register-routes: func();
     export load-from-ledger: func(cmd: string);
     export insert-in-ledger: func(cmd: string);
-    export ping: func();
-    export ping2: func();
 }
