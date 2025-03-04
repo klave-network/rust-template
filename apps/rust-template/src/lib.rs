@@ -2,7 +2,7 @@
 mod bindings;
 
 use bindings::Guest;
-use klave::{self};
+use klave;
 use serde_json::Value;
 use serde_json::json;
 struct Component;

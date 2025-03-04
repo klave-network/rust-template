@@ -27,7 +27,7 @@ You can see these methods exposed in the `wit` [interface](https://github.com/kl
 mod bindings;
 
 use bindings::Guest;
-use klave::{self};
+use klave;
 struct Component;
 
 impl Guest for Component {
