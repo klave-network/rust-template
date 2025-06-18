@@ -1,7 +1,7 @@
-package component:{{project-name}};
+package component:{{component_name}};
 
 /// An example world for the component to target.
-world {{project-name}} {
+world {{component_name}} {
     export register-routes: func();
     export load-from-ledger: func(cmd: string);
     export insert-in-ledger: func(cmd: string);

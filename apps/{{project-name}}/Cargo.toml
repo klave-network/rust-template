@@ -13,5 +13,5 @@ klave = "0.4.0"
 crate-type = ["cdylib"]
 
 [package.metadata.component]
-package = "component:{{project-name}}"
+package = "component:{{component_name}}"
 
