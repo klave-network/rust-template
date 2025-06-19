@@ -1,21 +1,46 @@
 # Klave App Rust Template
-Use this template to help you scaffold a new Rust application.
+Use this template to scaffold a new Klave Rust application.
 
-## Usage
+## 📖 About
 Klave aims to make it easy to build and deploy WebAssembly application within Trusted Execution Environments (TEEs) and leverage the latest
 developments in the [WebAssembly component model](https://github.com/WebAssembly/component-model) and [Wasmtime](https://wasmtime.dev/) runtime.
 For a more detailed documentation, please read the [Klave docs](https://docs.klave.com/sdk/latest).
 
-## Prerequisites
+## 📦 Prerequisites
 To use and build this template the following tools must be installed:
 - The [Rust Toolchain](https://www.rust-lang.org/tools/install) (incl. rust, rustup, cargo)
-- Cargo component : `cargo install cargo-component`
+- cargo-generate : `cargo install cargo-generate`
+- cargo-component : `cargo install cargo-component`
 - `wasm32-unknown-unknown` target : `rustup target add wasm32-unknown-unknown`
 
-## Wasm component
+## 🚴 Usage
+
+### 🐑 Use `cargo generate` to Clone this Template
+
+[Learn more about `cargo generate` here.](https://github.com/ashleygwilliams/cargo-generate)
+
+```
+cargo generate --git https://github.com/klave-network/rust-template --name my-project
+cd my-project
+```
+
+### 🪼 Deploy on Klave
+
+[Deploy on Klave](https://app.klave.com/login)
+
+### 🛠️ You can also build locally
+
+[Learn more about `cargo component` here.](https://github.com/bytecodealliance/cargo-component)
+
+```cargo component build --target wasm32-unknown-unknown --release```
+
+this creates a `target` folder with the built wasm files in `target\wasm32-unknown-unknown\release\`
+
+## 🧩 Wasm component
+
 Klave apps are `wasm component`.
 In this template, three methods are implemented, registered and exposed: 
-You can see these methods exposed in the `wit` [interface](https://github.com/klave-network/rust-template/blob/master/apps/rust-template/wit/world.wit):
+You can see these methods exposed in the `wit` [interface](https://github.com/klave-network/rust-template/blob/main/apps/rust-template/wit/world.wit):
 - `export register-routes: func();`
 - `export load-from-ledger: func(cmd: string);`
 - `export insert-in-ledger: func(cmd: string);`
@@ -65,15 +90,8 @@ world rust-template {
     export insert-in-ledger: func(cmd: string);
 }
 ```
-3 - Deploy Your App on Klave
 
-[![Deploy on Klave](https://klave.com/images/deploy-on-klave.svg)](https://app.klave.com/login)
-
-4 - You can also build locally
-`cargo component build --target wasm32-unknown-unknown --release`
-this also create a `target` folder with the built wasm files in  `target\wasm32-unknown-unknown\release\`
-
-## Authors
+## 🧑‍🤝‍🧑 Authors
 
 This template is created by [Klave](https://klave.com) and [Secretarium](https://secretarium.com) team members, with contributions from:
 

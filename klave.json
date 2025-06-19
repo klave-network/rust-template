@@ -5,10 +5,10 @@
   ],
   "applications": [
     {
-      "name": "rust-template",
+      "name": "{{project-name}}",
       "description": "A Rust component template for Klave",
       "version": "0.1.0",
-      "rootDir": "/apps/rust-template"
+      "rootDir": "/apps/{{project-name}}"
     }
   ]
 }
