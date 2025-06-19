@@ -60,16 +60,16 @@ impl Guest for Component {
     fn register_routes(){
         // By convention it is better to register the route with their wit names.
         // It means replacing the `_` by `-`
-        // To call your routes make sure you use the naming you have registered them with.
-        klave::router::add_user_query("your-query-1");
-        klave::router::add_user_transaction("your-transaction-1");
+        // It will allows to call your routes with either `_` by `-`
+        klave::router::add_user_query("your-first-query");
+        klave::router::add_user_transaction("your-first-transaction");
     }
 
-    fn your_query_1(cmd: String){
+    fn your_first_query(cmd: String){
         // implement your Query
     }
 
-    fn your_transaction_1(cmd: String){
+    fn your_first_transaction(cmd: String){
         // Implement your Transaction
     }
 }
@@ -86,8 +86,8 @@ package component:rust-template;
 /// An example world for the component to target.
 world rust-template {
     export register-routes: func();
-    export load-from-ledger: func(cmd: string);
-    export insert-in-ledger: func(cmd: string);
+    export your-first-query: func(cmd: string);
+    export your-first-transaction: func(cmd: string);
 }
 ```
 

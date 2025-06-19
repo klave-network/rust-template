@@ -10,8 +10,8 @@ struct Component;
 impl Guest for Component {
 
     fn register_routes(){
-        klave::router::add_user_query("load_from_ledger");
-        klave::router::add_user_transaction("insert_in_ledger");
+        klave::router::add_user_query("load-from-ledger");
+        klave::router::add_user_transaction("insert-in-ledger");
     }
 
     fn load_from_ledger(cmd: String){
