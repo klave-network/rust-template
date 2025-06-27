@@ -2,4 +2,4 @@
 pre = ["pre-script.rhai"]
 
 [template]
-sub_templates = ["templates/ledger"]
+sub_templates = ["templates/ledger", "templates/attestation"]
