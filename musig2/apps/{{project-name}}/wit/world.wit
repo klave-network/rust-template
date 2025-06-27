@@ -1,0 +1,34 @@
+package component:{{component_name}};
+
+/// An example world for the component to target.
+world {{component_name}} {
+    /// The world is a collection of functions that can be called from the component.
+    export register-routes: func();
+    // routes dedicated to the MuSig2 aggregator
+    export initiate-musig-context: func(cmd: string);
+    export load-musig-agg-session-ids: func(cmd: string);
+    export load-musig-agg-session: func(cmd: string);
+    export submit-pub-nonce: func(cmd: string);
+    export submit-partial-signature: func(cmd: string);
+    export get-final-signature: func(cmd: string);
+    // routes for user management
+    export register-user: func(cmd: string);
+    export load-current-user: func(cmd: string);
+    export is-registered: func(cmd: string);
+    export get-all-users: func(cmd: string);
+    // routes for key management
+    export create-key: func(cmd: string);
+    export load-keys: func(cmd: string);
+    export load-key-name-ids: func(cmd: string);
+    export load-key-pair: func(cmd: string);
+    // routes for MuSig2 session management
+    export create-musig-session-definition: func(cmd: string);
+    export load-musig-session-ids: func(cmd:string);
+    export update-musig-user-public-key: func(cmd:string);
+    export load-musig-session: func(cmd:string);
+    export update-musig-aggregation-session: func(cmd:string);
+    // routes for specific MuSig2 operations performed by each user
+    export create-public-nonce: func(cmd:string);
+    export create-partial-signature: func(cmd:string);
+    export verify-final-signature: func(cmd:string);
+}

@@ -1,0 +1,1 @@
+import{j as e}from"./index-BbTZgOPh.js";const i=()=>e.jsx("div",{className:"min-h-screen grid place-items-center",children:e.jsx("div",{className:"flex items-center gap-2",children:e.jsx("span",{children:"Initializing..."})})});export{i as pendingComponent};
