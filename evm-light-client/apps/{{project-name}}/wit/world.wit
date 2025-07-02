@@ -1,0 +1,14 @@
+package component:{{component_name}};
+
+/// An example world for the component to target.
+world {{component_name}} {
+    export register-routes: func();
+    export light-client-init: func(cmd: string);
+    export light-client-update: func(cmd: string);
+    export light-client-update-for-block-number: func(cmd: string);
+    export light-client-update-for-period: func(cmd: string);
+    export light-client-update-for-slot: func(cmd: string);
+    export light-client-fetch-header-from-slot: func(cmd: string);
+    export light-client-fetch-block-from-slot: func(cmd: string);
+    export light-client-persist: func(cmd: string);
+}

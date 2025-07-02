@@ -1,0 +1,37 @@
+[package]
+name = "{{project-name}}"
+version = "0.1.0"
+authors = ["{{authors}}"]
+edition = "2021"
+
+[dependencies]
+wit-bindgen-rt = { version = "0.39.0", features = ["bitflags"] }
+serde = { version = "1.0", default-features = false, features = ["alloc", "derive"] }
+serde_json = "1.0.140"
+hex = { version = "0.4.3", default-features = false, features = ["alloc", "serde"] }
+sha2 = { version = "0.10.2", default-features = false }
+klave = "0.3.0"
+http = "1.2.0"
+url = "2.5.4"
+getrandom = { version = "0.2", features = ["custom"] }
+clap = { version = "4.1.1", features = ["derive"] }
+displaydoc = { version = "0.2", default-features = false }
+anyhow = { version = "1.0.56" }
+env_logger = { version = "0.10.0" }
+hex-literal = "0.3.4"
+log = { version = "0.4.17" }
+milagro_bls = { git = "https://github.com/datachainlab/milagro_bls", rev = "bc2b5b5e8d48b7e2e1bfaa56dc2d93e13cb32095", default-features = false }
+ssz-rs = { git = "https://github.com/bluele/ssz_rs", branch = "serde-no-std", default-features = false, features = ["serde"] }
+ssz-rs-derive = { git = "https://github.com/bluele/ssz_rs", branch = "serde-no-std", default-features = false }
+rs_merkle = { version = "1.2.0", default-features = true}
+primitive-types = { version = "0.12.1", default-features = false }
+trie-db = { version= "0.24.0", default-features = false }
+patricia-merkle-trie = { git = "https://github.com/bluele/patricia-merkle-trie", branch = "no-std-keccak-hasher", default-features = false, features = ["keccak"] }
+rlp = { version = "0.5.2", default-features = false }
+
+[lib]
+crate-type = ["cdylib"]
+
+[package.metadata.component]
+package = "component:{{component_name}}"
+
