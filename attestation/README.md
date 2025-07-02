@@ -28,7 +28,7 @@ To use and build this template the following tools must be installed:
 [Learn more about `cargo generate` here.](https://github.com/ashleygwilliams/cargo-generate)
 
 ```bash
-cargo generate --git https://github.com/klave-network/rust-template --name my-attestation-app attestation
+cargo generate --git https://github.com/klave-network/rust-template attestation --name my-attestation-app
 cd my-attestation-app
 ```
 

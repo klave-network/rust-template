@@ -2,4 +2,4 @@
 pre = ["pre-script.rhai"]
 
 [template]
-exclude = ["ui/*", "LICENSE.md"]
+exclude = ["*.png", "*.ico", "LICENSE.md"]
