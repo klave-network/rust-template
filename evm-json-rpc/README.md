@@ -22,7 +22,7 @@ In this template, the following libraries are leveraged:
 
 ## Wasm Component
 
-Klave applications are built as WebAssembly (WASM) components. The following methods are implemented and exposed in the `evm-json-rpc` component:
+Klave applications are built as WebAssembly (WASM) components. The following methods are implemented and exposed in the {{component_name}} component:
 
 ```rust
 - register-routes: Registers the available routes.

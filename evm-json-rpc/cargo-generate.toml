@@ -2,4 +2,4 @@
 pre = ["pre-script.rhai"]
 
 [template]
-exclude = ["*eth.rs", "LICENSE.md", "README.md"]
+exclude = ["*eth.rs", "LICENSE.md"]

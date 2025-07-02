@@ -1,2 +1,5 @@
 [hooks]
 pre = ["pre-script.rhai"]
+
+[template]
+exclude = ["LICENSE.md"]

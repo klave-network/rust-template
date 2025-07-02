@@ -27,7 +27,7 @@ In this template, the following libraries are leveraged:
 
 ## Wasm Component
 
-Klave applications are built as WebAssembly (WASM) components. The following methods are implemented and exposed in the `evm-light-client` component:
+Klave applications are built as WebAssembly (WASM) components. The following methods are implemented and exposed in the {{component_name}} component:
 
 ### Light Client Management
 - `register-routes`: Registers the available routes.

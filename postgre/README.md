@@ -168,5 +168,5 @@ This template is created by [Klave](https://klave.com) and [Secretarium](https:/
 
 - Nicolas Marie ([@Akhilleus20](https://github.com/akhilleus20)) - [Klave](https://klave.com) | [Secretarium](https://secretarium.com)
 - Jeremie Labbe ([@jlabbeklavo](https://github.com/jlabbeKlavo)) - [Klave](https://klave.com) | [Secretarium](https://secretarium.com)
-- Etienne Bosse ([@Gosu14](https://github.com/Gosu14)) - [Klave](https://klave.com) | [Secretarium](https://secretarium.com)
 
+For more information and support, refer to the [Klave documentation](https://docs.klave.com) or contact the authors.
