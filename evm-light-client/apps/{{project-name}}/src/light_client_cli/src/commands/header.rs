@@ -1,7 +1,7 @@
 use crate::light_client_cli::src::context::Context;
+use crate::lodestar_rpc::src::client::RPCClient;
 use anyhow::Result;
 use clap::Parser;
-use crate::lodestar_rpc::src::client::RPCClient;
 
 #[derive(Clone, Debug, Parser, PartialEq)]
 pub struct HeaderCommand {
@@ -27,12 +27,12 @@ impl HeaderCommand {
                     BYTES_PER_LOGS_BLOOM,
                     MAX_EXTRA_DATA_BYTES,
                 >()?;
-                client
-                    .get_beacon_header_by_slot(res.data.finalized_header.beacon.slot)
-                    ?
+                client.get_beacon_header_by_slot(res.data.finalized_header.beacon.slot)?
             }
         };
-        klave::notifier::send_string(&format!("{}", serde_json::to_string(&res.data.header.message)?));
+        klave::notifier::send_string(
+            &(serde_json::to_string(&res.data.header.message)?).to_string(),
+        );
         Ok(())
     }
 }

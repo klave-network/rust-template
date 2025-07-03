@@ -1,8 +1,9 @@
 use crate::consensus::src::{
-    config::Config,
     beacon::Version,
+    config::Config,
     fork::{
-        altair::ALTAIR_FORK_SPEC, bellatrix::BELLATRIX_FORK_SPEC, capella::CAPELLA_FORK_SPEC, deneb::DENEB_FORK_SPEC, electra::ELECTRA_FORK_SPEC, ForkParameter, ForkParameters
+        altair::ALTAIR_FORK_SPEC, bellatrix::BELLATRIX_FORK_SPEC, capella::CAPELLA_FORK_SPEC,
+        deneb::DENEB_FORK_SPEC, electra::ELECTRA_FORK_SPEC, ForkParameter, ForkParameters,
     },
     preset,
     types::U64,

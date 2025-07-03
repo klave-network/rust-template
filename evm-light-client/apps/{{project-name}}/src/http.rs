@@ -1,12 +1,12 @@
-use serde::{Deserialize, Serialize};
 use http::Request;
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct TransactionRequest {
     pub jsonrpc: String,
     pub id: i32,
     pub method: String,
-    pub params: Vec<String>
+    pub params: Vec<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -23,7 +23,10 @@ pub struct JsonRpcError {
     message: String,
 }
 
-pub fn request_format(uri: &str, body: &str) -> Result<Request<String>, Box<dyn std::error::Error>> {
+pub fn request_format(
+    uri: &str,
+    body: &str,
+) -> Result<Request<String>, Box<dyn std::error::Error>> {
     let stripped_body = body.replace("\\", ""); // Remove extra backslashes
 
     let http_request = Request::builder()
@@ -31,8 +34,8 @@ pub fn request_format(uri: &str, body: &str) -> Result<Request<String>, Box<dyn 
         .uri(uri)
         .header("content-type", "application/json")
         .body(stripped_body)
-        .unwrap();            
-        
+        .unwrap();
+
     Ok(http_request)
 }
 

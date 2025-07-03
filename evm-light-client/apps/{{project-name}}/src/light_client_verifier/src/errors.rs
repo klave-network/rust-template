@@ -1,5 +1,3 @@
-use crate::light_client_verifier::src::context::Fraction;
-use displaydoc::Display;
 use crate::consensus::src::{
     beacon::{BeaconBlockHeader, Epoch, Root, Slot},
     bls::PublicKey,
@@ -7,6 +5,8 @@ use crate::consensus::src::{
     sync_protocol::SyncCommitteePeriod,
     types::H256,
 };
+use crate::light_client_verifier::src::context::Fraction;
+use displaydoc::Display;
 use trie_db::TrieError;
 
 type BoxedTrieError = Box<TrieError<primitive_types::H256, rlp::DecoderError>>;

@@ -34,8 +34,7 @@ impl Chain {
             finalized_root
         } else {
             self.rpc_client
-                .get_finality_checkpoints()
-                ?
+                .get_finality_checkpoints()?
                 .data
                 .finalized
                 .root
@@ -44,8 +43,7 @@ impl Chain {
             self.rpc_client
                 .get_bootstrap::<SYNC_COMMITTEE_SIZE, BYTES_PER_LOGS_BLOOM, MAX_EXTRA_DATA_BYTES>(
                     finalized_root,
-                )
-                ?
+                )?
                 .data
                 .into(),
         ))
@@ -81,7 +79,7 @@ impl FromStr for Network {
             "holesky" => Ok(Network::Holesky),
             "sepolia" => Ok(Network::Sepolia),
             s => Err(Error::Other {
-                description: format!("unknown network: {}", s),
+                description: format!("unknown network: {s}"),
             }),
         }
     }

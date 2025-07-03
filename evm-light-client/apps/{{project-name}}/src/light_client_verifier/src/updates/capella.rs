@@ -1,6 +1,5 @@
 pub use super::bellatrix::ExecutionUpdateInfo;
 use super::{ConsensusUpdate, LightClientBootstrap};
-use core::ops::Deref;
 use crate::consensus::src::{
     beacon::{BeaconBlockHeader, Slot},
     compute::hash_tree_root,
@@ -8,6 +7,7 @@ use crate::consensus::src::{
     sync_protocol::{SyncAggregate, SyncCommittee},
     types::H256,
 };
+use core::ops::Deref;
 
 #[derive(Clone, Debug, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
 #[serde(transparent)]

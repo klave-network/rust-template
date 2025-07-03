@@ -2,17 +2,15 @@
 mod bindings;
 
 use bindings::Guest;
-use klave;
 
-pub mod database;
-pub mod crypto;
-pub mod utils;
 pub mod business;
+pub mod crypto;
+pub mod database;
+pub mod utils;
 
 struct Component;
 impl Guest for Component {
-
-    fn register_routes(){
+    fn register_routes() {
         klave::router::add_user_transaction(&String::from("db_setup"));
         klave::router::add_user_query(&String::from("execute_table_encryption"));
 
@@ -27,7 +25,7 @@ impl Guest for Component {
         let input: database::DBInputDetails = match serde_json::from_str(&cmd) {
             Ok(input) => input,
             Err(err) => {
-                klave::notifier::send_string(&format!("Invalid input: {}", err));
+                klave::notifier::send_string(&format!("Invalid input: {err}"));
                 return;
             }
         };
@@ -35,54 +33,51 @@ impl Guest for Component {
         let mut clients = match database::Clients::load() {
             Ok(c) => c,
             Err(err) => {
-                klave::notifier::send_string(&format!("Failed to load clients: {}", err));
+                klave::notifier::send_string(&format!("Failed to load clients: {err}"));
                 return;
             }
         };
 
-        match clients.add(
-            input.clone(),
-        ) {
+        match clients.add(input.clone()) {
             Ok(database_id) => {
                 klave::notifier::send_string(&database_id);
-            },
-            Err(err) => {
-                klave::notifier::send_string(&format!("Failed to add database client: {}", err));
-                return;
             }
-        };
+            Err(err) => {
+                klave::notifier::send_string(&format!("Failed to add database client: {err}"));
+            }
+        }
     }
 
     fn execute_table_encryption(cmd: String) {
         let db_table: database::DBTable = match serde_json::from_str(&cmd) {
             Ok(input) => input,
             Err(err) => {
-                klave::notifier::send_string(&format!("Invalid input: {}", err));
+                klave::notifier::send_string(&format!("Invalid input: {err}"));
                 return;
             }
         };
 
-        let mut client: database::Client = match database::Client::load(db_table.database_id.clone()) {
-            Ok(c) => c,
-            Err(err) => {
-                klave::notifier::send_string(&format!("Failed to load client: {}", err));
-                return;
-            }
-        };
-        let _ = match client.connect() {
+        let mut client: database::Client =
+            match database::Client::load(db_table.database_id.clone()) {
+                Ok(c) => c,
+                Err(err) => {
+                    klave::notifier::send_string(&format!("Failed to load client: {err}"));
+                    return;
+                }
+            };
+        match client.connect() {
             Ok(_) => (),
             Err(err) => {
-                klave::notifier::send_string(&format!("Failed to connect to client: {}", err));
+                klave::notifier::send_string(&format!("Failed to connect to client: {err}"));
                 return;
             }
         };
-        let _ = match client.encrypt_columns(db_table) {
+        match client.encrypt_columns(db_table) {
             Ok(_) => (),
             Err(err) => {
-                klave::notifier::send_string(&format!("Failed to encrypt columns: {}", err));
-                return;
+                klave::notifier::send_string(&format!("Failed to encrypt columns: {err}"));
             }
-        };
+        }
     }
 
     fn read_encrypted_data_per_user(cmd: String) {
@@ -96,7 +91,6 @@ impl Guest for Component {
     fn avg_age_for_female(cmd: String) {
         business::avg_age_for_female(cmd);
     }
-
 }
 
 bindings::export!(Component with_types_in bindings);

@@ -1,5 +1,7 @@
 use super::{errors::Error, updates::ConsensusUpdate};
-use crate::consensus::src::{compute::compute_sync_committee_period_at_slot, context::ChainContext};
+use crate::consensus::src::{
+    compute::compute_sync_committee_period_at_slot, context::ChainContext,
+};
 
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum Misbehaviour<const SYNC_COMMITTEE_SIZE: usize, CU: ConsensusUpdate<SYNC_COMMITTEE_SIZE>> {

@@ -1,14 +1,12 @@
 use super::{
-    chain::Network, 
+    chain::Network,
     cli::Opts,
     db::{FileDB, DB},
     errors::Error,
-    state::LightClientStore
+    state::LightClientStore,
 };
 use crate::consensus::src::{
-    config::Config,
-    context::ChainContext,
-    fork::deneb::LightClientBootstrap
+    config::Config, context::ChainContext, fork::deneb::LightClientBootstrap,
 };
 use crate::lodestar_rpc::src::types::GenesisData;
 use log::*;
@@ -75,7 +73,7 @@ impl<
         let value = match serde_json::to_string(bootstrap) {
             Ok(value) => value,
             Err(e) => {
-                error!("Failed to serialize bootstrap: {:?}", e);
+                error!("Failed to serialize bootstrap: {e:?}");
                 return Err(Error::Other {
                     description: "Failed to serialize bootstrap".into(),
                 });
@@ -105,7 +103,7 @@ impl<
         let value = match serde_json::to_string(state) {
             Ok(value) => value,
             Err(e) => {
-                error!("Failed to serialize state: {:?}", e);
+                error!("Failed to serialize state: {e:?}");
                 return Err(Error::Other {
                     description: "Failed to serialize state".into(),
                 });
@@ -116,12 +114,7 @@ impl<
     }
 
     /// Store accessors
-    pub fn get_genesis(
-        &self,
-    ) -> Result<
-        GenesisData,
-        Error,
-    > {
+    pub fn get_genesis(&self) -> Result<GenesisData, Error> {
         Ok(serde_json::from_slice(&self.db.get("genesis")?.ok_or(
             Error::Other {
                 description: "genesis not found".into(),
@@ -129,14 +122,11 @@ impl<
         )?)?)
     }
 
-    pub fn store_genesis(
-        &self,
-        genesis: &GenesisData,
-    ) -> Result<(), Error> {
+    pub fn store_genesis(&self, genesis: &GenesisData) -> Result<(), Error> {
         let value = match serde_json::to_string(genesis) {
             Ok(value) => value,
             Err(e) => {
-                error!("Failed to serialize genesis: {:?}", e);
+                error!("Failed to serialize genesis: {e:?}");
                 return Err(Error::Other {
                     description: "Failed to serialize genesis".into(),
                 });

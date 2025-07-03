@@ -2,16 +2,13 @@
 use std::fs::File;
 use std::io::Read;
 
-use http::header::{
-    HeaderMap, HeaderValue, ACCEPT, CONTENT_TYPE
-};
-use http::{Method, Request, Response, StatusCode, Uri};
 use super::request::RequestBuilder;
+use http::header::{HeaderMap, HeaderValue, ACCEPT, CONTENT_TYPE};
+use http::{Method, Request, Response, StatusCode, Uri};
 use klave;
 use url::Url;
 
-#[derive(Clone)]
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ClientRef {
     headers: HeaderMap,
 }
@@ -29,8 +26,7 @@ pub struct ClientRef {
 /// because it already uses an [`Arc`] internally.
 ///
 /// [`Rc`]: std::rc::Rc
-#[derive(Clone)]
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Client {
     inner: ClientRef,
 }
@@ -45,7 +41,6 @@ enum HttpVersionPref {
 struct Config {
     headers: HeaderMap,
 }
-
 
 /// A builder for the transport  [`RpcClient`].
 ///
@@ -62,8 +57,10 @@ pub struct ClientBuilder {
 
 impl Default for ClientBuilder {
     fn default() -> Self {
-        Self { 
-            config: Config { headers: HeaderMap::with_capacity(2) },             
+        Self {
+            config: Config {
+                headers: HeaderMap::with_capacity(2),
+            },
         }
     }
 }
@@ -77,11 +74,9 @@ impl ClientBuilder {
         headers.insert(ACCEPT, HeaderValue::from_static("*/*"));
 
         ClientBuilder {
-            config: Config {
-                headers
-            }
+            config: Config { headers },
         }
-    }    
+    }
 
     /// Returns a `Client` that uses this `ClientBuilder` configuration.
     ///
@@ -97,7 +92,7 @@ impl ClientBuilder {
             },
         })
     }
-}    
+}
 
 impl Default for Client {
     fn default() -> Self {
@@ -145,16 +140,25 @@ impl Client {
             None => panic!("Url must have a path and query"),
         };
         parts.uri = Uri::from_parts({
-            let mut parts = path_and_query.as_str().parse::<http::Uri>().unwrap().into_parts();
+            let mut parts = path_and_query
+                .as_str()
+                .parse::<http::Uri>()
+                .unwrap()
+                .into_parts();
             parts.scheme = uri_parts.scheme;
             parts.authority = uri_parts.authority;
             parts
-        }).unwrap();
+        })
+        .unwrap();
         parts.headers = HeaderMap::with_capacity(2);
-        parts.headers.insert(ACCEPT, HeaderValue::from_static("*/*"));
-        parts.headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
+        parts
+            .headers
+            .insert(ACCEPT, HeaderValue::from_static("*/*"));
+        parts
+            .headers
+            .insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
         let req = Request::from_parts(parts, body);
-        
+
         RequestBuilder::new(self.clone(), req)
     }
 
@@ -173,11 +177,11 @@ impl Client {
     pub fn execute(
         &self,
         request: Request<String>,
-        display: bool
+        display: bool,
     ) -> Result<Response<String>, Box<dyn std::error::Error>> {
         self.execute_request(request, display)
     }
-    
+
     /// Convenience method to make a `GET` request to a URL.
     ///
     /// # Errors
@@ -198,21 +202,29 @@ impl Client {
 }
 
 pub trait ExecuteRequest {
-    fn execute_request(&self, req: Request<String>, display: bool) -> Result<Response<String>, Box<dyn std::error::Error>>;
+    fn execute_request(
+        &self,
+        req: Request<String>,
+        display: bool,
+    ) -> Result<Response<String>, Box<dyn std::error::Error>>;
 }
 
 impl ExecuteRequest for Client {
-    fn execute_request(&self, req: Request<String>, display: bool) -> Result<Response<String>, Box<dyn std::error::Error>> {     
+    fn execute_request(
+        &self,
+        req: Request<String>,
+        display: bool,
+    ) -> Result<Response<String>, Box<dyn std::error::Error>> {
         if display {
-            klave::notifier::send_string(&format!("execute_request request: {:?}", req));
+            klave::notifier::send_string(&format!("execute_request request: {req:?}"));
         }
 
         let response = klave::https::request(&req)?;
-                
+
         if display {
-            klave::notifier::send_string(&format!("execute_request response: {:?}", response));
+            klave::notifier::send_string(&format!("execute_request response: {response:?}"));
         }
-        
+
         if !response.status().is_success() {
             return Err(format!("HTTP error: {}, {:?}", response.status(), response).into());
         }

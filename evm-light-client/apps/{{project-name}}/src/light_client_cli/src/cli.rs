@@ -8,7 +8,7 @@ use crate::light_client_cli::src::{
     context::Context,
     preset::{MainnetContext, MinimalContext},
 };
-    
+
 #[derive(Debug, Parser)]
 #[clap(
     name = env!("CARGO_PKG_NAME"),
@@ -51,7 +51,7 @@ impl Cli {
         let local_network = match self.opts.get_network() {
             Ok(network) => network,
             Err(e) => {
-                eprintln!("Invalid network: {}", e);
+                eprintln!("Invalid network: {e}");
                 return Ok(());
             }
         };
@@ -59,12 +59,9 @@ impl Cli {
         let opts = self.opts.clone();
         match local_network {
             Network::Mainnet | Network::Holesky | Network::Sepolia => {
-                self.run_with_context(MainnetContext::build(local_network, opts)?)                    
+                self.run_with_context(MainnetContext::build(local_network, opts)?)
             }
-            Network::Minimal => {
-                self.run_with_context(MinimalContext::build(local_network, opts)?)
-                    
-            }
+            Network::Minimal => self.run_with_context(MinimalContext::build(local_network, opts)?),
         }
     }
 

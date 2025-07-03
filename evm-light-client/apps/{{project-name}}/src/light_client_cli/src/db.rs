@@ -19,9 +19,7 @@ pub struct FileDB {
 
 impl FileDB {
     pub fn open(store_table: String) -> Result<Self, Error> {
-        Ok(Self { 
-            store_table
-        })
+        Ok(Self { store_table })
     }
 }
 
@@ -31,8 +29,10 @@ impl DB for FileDB {
         K: Into<String>,
     {
         match klave::ledger::get_table(self.store_table.as_str()).get(key.into().as_str()) {
-            Ok(v) => Ok(Some(v.into())),
-            Err(e) => return Err(Error::Other { description: e.to_string() })
+            Ok(v) => Ok(Some(v)),
+            Err(e) => Err(Error::Other {
+                description: e.to_string(),
+            }),
         }
     }
 
@@ -46,7 +46,9 @@ impl DB for FileDB {
 
         match klave::ledger::get_table(self.store_table.as_str()).set(key.as_str(), &value) {
             Ok(_) => Ok(()),
-            Err(e) => Err(Error::Other { description: e.to_string() }),
+            Err(e) => Err(Error::Other {
+                description: e.to_string(),
+            }),
         }
     }
 }

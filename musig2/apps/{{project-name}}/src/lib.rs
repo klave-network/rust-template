@@ -1,18 +1,16 @@
 #[allow(warnings)]
 mod bindings;
 mod musig_agg;
-mod wallet;
 mod musig_steps;
 mod utils;
+mod wallet;
 
 use bindings::Guest;
-use klave;
 
 struct Component;
 
 impl Guest for Component {
-
-    fn register_routes(){
+    fn register_routes() {
         klave::router::add_user_transaction("initiate-musig-context");
         klave::router::add_user_query("load-musig-agg-session-ids");
         klave::router::add_user_transaction("load-musig-agg-session");
@@ -38,11 +36,11 @@ impl Guest for Component {
         klave::router::add_user_query("verify-final-signature");
     }
 
-    fn initiate_musig_context(cmd: String){
+    fn initiate_musig_context(cmd: String) {
         musig_agg::initiate_musig_context(cmd);
     }
 
-    fn load_musig_agg_session_ids(_cmd: String){
+    fn load_musig_agg_session_ids(_cmd: String) {
         musig_agg::load_musig_agg_session_ids(_cmd);
     }
 
@@ -50,7 +48,7 @@ impl Guest for Component {
         musig_agg::load_musig_agg_session(cmd);
     }
 
-    fn submit_pub_nonce(cmd: String){
+    fn submit_pub_nonce(cmd: String) {
         musig_agg::submit_pub_nonce(cmd);
     }
 
@@ -62,55 +60,55 @@ impl Guest for Component {
         musig_agg::get_final_signature(cmd);
     }
 
-    fn register_user(cmd: String){
+    fn register_user(cmd: String) {
         wallet::register_user(cmd);
     }
 
-    fn load_current_user(cmd: String){
+    fn load_current_user(cmd: String) {
         wallet::load_current_user(cmd);
     }
 
-    fn is_registered(cmd: String){
+    fn is_registered(cmd: String) {
         wallet::is_registered(cmd);
     }
 
-    fn get_all_users(cmd: String){
+    fn get_all_users(cmd: String) {
         wallet::get_all_users(cmd);
     }
 
-    fn create_key(cmd: String){
+    fn create_key(cmd: String) {
         wallet::create_key(cmd);
     }
 
-    fn load_keys(cmd: String){
+    fn load_keys(cmd: String) {
         wallet::load_keys(cmd);
     }
 
-    fn load_key_name_ids(cmd: String){
+    fn load_key_name_ids(cmd: String) {
         wallet::load_key_name_ids(cmd);
     }
 
-    fn load_key_pair(cmd: String){
+    fn load_key_pair(cmd: String) {
         wallet::load_key_pair(cmd);
     }
 
-    fn create_musig_session_definition(cmd: String){
+    fn create_musig_session_definition(cmd: String) {
         wallet::create_musig_session_definition(cmd);
     }
 
-    fn load_musig_session_ids(cmd: String){
+    fn load_musig_session_ids(cmd: String) {
         wallet::load_musig_session_ids(cmd);
     }
 
-    fn update_musig_user_public_key(cmd: String){
+    fn update_musig_user_public_key(cmd: String) {
         wallet::update_musig_user_public_key(cmd);
     }
 
-    fn load_musig_session(cmd: String){
+    fn load_musig_session(cmd: String) {
         wallet::load_musig_session(cmd);
     }
 
-    fn update_musig_aggregation_session(cmd: String){
+    fn update_musig_aggregation_session(cmd: String) {
         wallet::update_musig_aggregation_session(cmd);
     }
 

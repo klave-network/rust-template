@@ -37,10 +37,8 @@ impl UpdateCommand {
             genesis.genesis_validators_root,
             None,
         );
-        
-        let _finished = lc
-            .update_until_target(target.clone())
-            ?;
+
+        let _finished = lc.update_until_target(target.clone())?;
         Ok(())
     }
 }

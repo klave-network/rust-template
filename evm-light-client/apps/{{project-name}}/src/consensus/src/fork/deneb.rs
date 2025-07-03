@@ -310,7 +310,10 @@ pub struct LightClientHeader<const BYTES_PER_LOGS_BLOOM: usize, const MAX_EXTRA_
 
 pub mod prover {
     use super::*;
-    use crate::consensus::src::{errors::Error, merkle::{get_subtree_index, MerkleTree}};
+    use crate::consensus::src::{
+        errors::Error,
+        merkle::{get_subtree_index, MerkleTree},
+    };
 
     pub fn gen_execution_payload_field_proof<
         const BYTES_PER_LOGS_BLOOM: usize,

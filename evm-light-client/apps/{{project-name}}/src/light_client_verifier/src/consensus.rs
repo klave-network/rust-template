@@ -3,7 +3,6 @@ use super::errors::Error;
 use super::misbehaviour::Misbehaviour;
 use super::state::{get_sync_committee_at_period, LightClientStoreReader};
 use super::updates::{ConsensusUpdate, ExecutionUpdate, LightClientBootstrap};
-use core::marker::PhantomData;
 use crate::consensus::src::beacon::{BeaconBlockHeader, Root, DOMAIN_SYNC_COMMITTEE};
 use crate::consensus::src::bls::{fast_aggregate_verify, BLSPublicKey, BLSSignature};
 use crate::consensus::src::compute::{
@@ -15,6 +14,7 @@ use crate::consensus::src::fork::{ForkSpec, BELLATRIX_INDEX};
 use crate::consensus::src::merkle::is_valid_normalized_merkle_branch;
 use crate::consensus::src::sync_protocol::SyncCommittee;
 use crate::consensus::src::types::H256;
+use core::marker::PhantomData;
 
 /// SyncProtocolVerifier is a verifier of [light client sync protocol](https://github.com/ethereum/consensus-specs/blob/dev/specs/altair/light-client/sync-protocol.md)
 #[derive(Debug, Clone, Default, PartialEq, Eq)]

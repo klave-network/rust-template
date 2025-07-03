@@ -1,7 +1,7 @@
+use crate::consensus::src::types::H256;
 use crate::light_client_cli::src::{chain::Chain, client::LightClient, context::Context};
 use anyhow::Result;
 use clap::Parser;
-use crate::consensus::src::types::H256;
 
 #[derive(Clone, Debug, Parser, PartialEq)]
 pub struct InitCommand {
@@ -22,13 +22,15 @@ impl InitCommand {
     ) -> Result<()> {
         let chain = Chain::new(ctx.beacon_endpoint());
         let trusted_block_root = if let Some(trusted_block_root) = self.trusted_block_root {
-            Some(H256::from_hex(&trusted_block_root).map_err(|e| anyhow::Error::msg(e.to_string()))?)
+            Some(
+                H256::from_hex(&trusted_block_root)
+                    .map_err(|e| anyhow::Error::msg(e.to_string()))?,
+            )
         } else if let Some(untrusted_slot) = self.untrusted_slot {
             Some(
                 chain
                     .rpc_client
-                    .get_beacon_header_by_slot(untrusted_slot.into())
-                    ?
+                    .get_beacon_header_by_slot(untrusted_slot.into())?
                     .data
                     .root,
             )

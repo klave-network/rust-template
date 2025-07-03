@@ -1,12 +1,12 @@
-use serde::{Deserialize, Serialize};
 use http::Request;
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct TransactionRequest {
     pub jsonrpc: String,
     pub id: i32,
     pub method: String,
-    pub params: Vec<String>
+    pub params: Vec<String>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -23,20 +23,27 @@ pub struct JsonRpcError {
     message: String,
 }
 
-pub fn request_format_with_auth(uri: &str, body: &str, auth: &str) -> Result<Request<String>, Box<dyn std::error::Error>> {
+pub fn request_format_with_auth(
+    uri: &str,
+    body: &str,
+    auth: &str,
+) -> Result<Request<String>, Box<dyn std::error::Error>> {
     let stripped_body = body.replace("\\", ""); // Remove extra backslashes
 
     let http_request = Request::builder()
         .method("POST")
         .uri(uri)
         .header("Content-Type", "application/json")
-        .header("Authorization", format!("Bearer {}", auth))
+        .header("Authorization", format!("Bearer {auth}"))
         .body(stripped_body)?;
 
     Ok(http_request)
 }
 
-pub fn request_format(uri: &str, body: &str) -> Result<Request<String>, Box<dyn std::error::Error>> {
+pub fn request_format(
+    uri: &str,
+    body: &str,
+) -> Result<Request<String>, Box<dyn std::error::Error>> {
     let stripped_body = body.replace("\\", ""); // Remove extra backslashes
 
     let http_request = Request::builder()
@@ -44,7 +51,7 @@ pub fn request_format(uri: &str, body: &str) -> Result<Request<String>, Box<dyn 
         .uri(uri)
         .header("Content-Type", "application/json")
         .body(stripped_body)?;
-        
+
     Ok(http_request)
 }
 
@@ -64,13 +71,10 @@ pub struct TokenResponse {
     token: String,
 }
 
-pub fn parse_token_response<T>(response_body: &str) -> Result<String, Box<dyn std::error::Error>>
-where
-    T: for<'de> Deserialize<'de>,
-{
+pub fn parse_token_response(response_body: &str) -> Result<String, Box<dyn std::error::Error>> {
     let token = match serde_json::from_str::<TokenResponse>(response_body) {
         Ok(response) => response.token,
-        Err(e) => return Err(e.into())
+        Err(e) => return Err(e.into()),
     };
     Ok(token)
 }

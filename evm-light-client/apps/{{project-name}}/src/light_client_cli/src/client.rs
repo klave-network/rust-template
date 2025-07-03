@@ -1,16 +1,17 @@
-use crate::light_client_cli::src::{
-    chain::Chain,
-    context::Context,
-    errors::Error,
-    state::{ExecutionUpdateInfo, LightClientStore},
-};
+use super::commands::PersistCommand;
 use crate::consensus::src::{
     beacon::{BlockNumber, Root, Slot},
     compute::compute_sync_committee_period_at_slot,
     context::ChainContext,
     fork::deneb::{self, LightClientUpdate},
     sync_protocol::SyncCommitteePeriod,
-    types::{H256, U64}
+    types::{H256, U64},
+};
+use crate::light_client_cli::src::{
+    chain::Chain,
+    context::Context,
+    errors::Error,
+    state::{ExecutionUpdateInfo, LightClientStore},
 };
 use crate::light_client_verifier::src::{
     consensus::SyncProtocolVerifier,
@@ -18,7 +19,6 @@ use crate::light_client_verifier::src::{
     updates::deneb::{ConsensusUpdateInfo, LightClientBootstrapInfo},
 };
 use crate::lodestar_rpc::src::types::GenesisData;
-use super::commands::PersistCommand;
 use log::*;
 
 const EXECUTION_PAYLOAD_STATE_ROOT_SUBTREE_INDEX: usize = 2;
@@ -75,15 +75,27 @@ impl<
         }
     }
 
-    pub fn init_with_bootstrap(&self, trusted_block_root: Option<H256>, genesis_data: &GenesisData) -> Result<()> {
-        let bootstrap: LightClientBootstrapInfo<SYNC_COMMITTEE_SIZE, BYTES_PER_LOGS_BLOOM, MAX_EXTRA_DATA_BYTES> = self.chain.get_bootstrap(trusted_block_root).unwrap();
+    pub fn init_with_bootstrap(
+        &self,
+        trusted_block_root: Option<H256>,
+        genesis_data: &GenesisData,
+    ) -> Result<()> {
+        let bootstrap: LightClientBootstrapInfo<
+            SYNC_COMMITTEE_SIZE,
+            BYTES_PER_LOGS_BLOOM,
+            MAX_EXTRA_DATA_BYTES,
+        > = self.chain.get_bootstrap(trusted_block_root).unwrap();
 
         let vctx = self.build_verification_context();
-        match self.verifier
-            .validate_boostrap(&vctx, &bootstrap, trusted_block_root) {
+        match self
+            .verifier
+            .validate_boostrap(&vctx, &bootstrap, trusted_block_root)
+        {
             Ok(_) => (),
             Err(e) => {
-                klave::notifier::send_string(&format!("failed to validate bootstrap: {:?}, {:?}, {:?}", bootstrap, SYNC_COMMITTEE_SIZE, e));
+                klave::notifier::send_string(&format!(
+                    "failed to validate bootstrap: {bootstrap:?}, {SYNC_COMMITTEE_SIZE:?}, {e:?}"
+                ));
                 return Err(Error::Other {
                     description: "failed to validate bootstrap".into(),
                 });
@@ -92,26 +104,33 @@ impl<
         let state = LightClientStore::from_bootstrap(
             bootstrap.clone().0,
             bootstrap.header.execution.clone(),
-        );        
+        );
 
         let bootstrap_value = serde_json::to_string(&bootstrap)?;
         let state_value = serde_json::to_string(&state)?;
         let genesis_value = serde_json::to_string(&genesis_data)?;
 
-        let to_persist = serde_json::to_string(&PersistCommand{
+        let to_persist = serde_json::to_string(&PersistCommand {
             bootstrap_info: Some(bootstrap_value),
             state_info: Some(state_value),
             genesis_info: Some(genesis_value),
         })?;
-        klave::notifier::send_string(&format!("{}", to_persist));
+        klave::notifier::send_string(&to_persist.to_string());
         Ok(())
     }
 
-    pub fn store_boostrap(&self, bootstrap: LightClientBootstrapInfo<SYNC_COMMITTEE_SIZE, BYTES_PER_LOGS_BLOOM, MAX_EXTRA_DATA_BYTES>) -> Result<()> {
+    pub fn store_boostrap(
+        &self,
+        bootstrap: LightClientBootstrapInfo<
+            SYNC_COMMITTEE_SIZE,
+            BYTES_PER_LOGS_BLOOM,
+            MAX_EXTRA_DATA_BYTES,
+        >,
+    ) -> Result<()> {
         match self.ctx.store_boostrap(&bootstrap) {
             Ok(_) => (),
             Err(e) => {
-                klave::notifier::send_string(&format!("failed to store bootstrap: {:?}", e));
+                klave::notifier::send_string(&format!("failed to store bootstrap: {e:?}"));
                 return Err(Error::Other {
                     description: "failed to store bootstrap".into(),
                 });
@@ -120,11 +139,14 @@ impl<
         Ok(())
     }
 
-    pub fn store_light_client_state(&self, state: LightClientStore<SYNC_COMMITTEE_SIZE, BYTES_PER_LOGS_BLOOM, MAX_EXTRA_DATA_BYTES>) -> Result<()> {
+    pub fn store_light_client_state(
+        &self,
+        state: LightClientStore<SYNC_COMMITTEE_SIZE, BYTES_PER_LOGS_BLOOM, MAX_EXTRA_DATA_BYTES>,
+    ) -> Result<()> {
         match self.ctx.store_light_client_state(&state) {
             Ok(_) => (),
             Err(e) => {
-                klave::notifier::send_string(&format!("failed to store light client state: {:?}", e));
+                klave::notifier::send_string(&format!("failed to store light client state: {e:?}"));
                 return Err(Error::Other {
                     description: "failed to store light client state".into(),
                 });
@@ -134,10 +156,10 @@ impl<
     }
 
     pub fn store_genesis(&self, genesis: &GenesisData) -> Result<()> {
-        match self.ctx.store_genesis(&genesis) {
+        match self.ctx.store_genesis(genesis) {
             Ok(_) => (),
             Err(e) => {
-                klave::notifier::send_string(&format!("failed to store genesis: {:?}", e));
+                klave::notifier::send_string(&format!("failed to store genesis: {e:?}"));
                 return Err(Error::Other {
                     description: "failed to store genesis".into(),
                 });
@@ -151,7 +173,7 @@ impl<
             Ok(Some(v)) => Some(v),
             Ok(None) => None,
             Err(e) => {
-                klave::notifier::send_string(&format!("failed to update sync committee: {:?}", e));
+                klave::notifier::send_string(&format!("failed to update sync committee: {e:?}"));
                 return Err(e);
             }
         } {
@@ -162,7 +184,9 @@ impl<
             Ok(Some(v)) => Some(v),
             Ok(None) => None,
             Err(e) => {
-                klave::notifier::send_string(&format!("failed to update slot on current period: {:?}", e));
+                klave::notifier::send_string(&format!(
+                    "failed to update slot on current period: {e:?}"
+                ));
                 return Err(e);
             }
         } {
@@ -170,7 +194,7 @@ impl<
                 return Ok(false);
             }
         } else if target == Target::None {
-            return Ok(true);            
+            return Ok(true);
         }
         Ok(true)
     }
@@ -179,7 +203,7 @@ impl<
         let state = match self.ctx.get_light_client_state() {
             Ok(state) => state,
             Err(e) => {
-                klave::notifier::send_string(&format!("light client state not found: {}", e));
+                klave::notifier::send_string(&format!("light client state not found: {e}"));
                 return Ok(None);
             }
         };
@@ -190,8 +214,7 @@ impl<
         let mut updates = self
             .chain
             .rpc_client
-            .get_light_client_updates(period, 2)
-            ?
+            .get_light_client_updates(period, 2)?
             .0
             .into_iter()
             .map(|u| u.data.into());
@@ -204,21 +227,16 @@ impl<
         let vctx = self.build_verification_context();
         let new_state = match [updates.next(), updates.next()] {
             [None, None] => return Ok(None), // do nothing here
-            [Some(update), None] => {
-                self.process_light_client_update(&vctx, update, &state)
-                    ?
-            }
+            [Some(update), None] => self.process_light_client_update(&vctx, update, &state)?,
             [Some(update_first), Some(update_second)] => {
-                let state = if let Some(new_state) = self
-                    .process_light_client_update(&vctx, update_first, &state)
-                    ?
+                let state = if let Some(new_state) =
+                    self.process_light_client_update(&vctx, update_first, &state)?
                 {
                     new_state
                 } else {
                     state
                 };
-                self.process_light_client_update(&vctx, update_second, &state)
-                    ?
+                self.process_light_client_update(&vctx, update_second, &state)?
             }
             _ => unreachable!(),
         };
@@ -241,8 +259,7 @@ impl<
             .chain
             .rpc_client
             .get_finality_update::<SYNC_COMMITTEE_SIZE, BYTES_PER_LOGS_BLOOM, MAX_EXTRA_DATA_BYTES>(
-            )
-            ?
+            )?
             .data;
         let finality_update_period =
             compute_sync_committee_period_at_slot(&self.ctx, update.finalized_header.beacon.slot);
@@ -255,10 +272,7 @@ impl<
         }
 
         let vctx = self.build_verification_context();
-        if let Some(new_state) = self
-            .process_light_client_update(&vctx, update.into(), &state)
-            ?
-        {
+        if let Some(new_state) = self.process_light_client_update(&vctx, update.into(), &state)? {
             klave::notifier::send_string(&format!(
                 "post finalized header: period={} slot={}",
                 compute_sync_committee_period_at_slot(
@@ -315,7 +329,7 @@ impl<
         let updates = match self.build_updates(update) {
             Ok(updates) => updates,
             Err(Error::FinalizedHeaderNotFound) => {
-                klave::notifier::send_string(&format!("updates: finalized header not found"));
+                klave::notifier::send_string("updates: finalized header not found");
                 return Ok(None);
             }
             Err(e) => return Err(e),
@@ -326,14 +340,14 @@ impl<
 
         if let Some(new_store) = state.apply_light_client_update(vctx, &updates.0)? {
             let state_value = serde_json::to_string(&new_store)?;
-            match klave::notifier::send_json(&PersistCommand{
+            match klave::notifier::send_json(&PersistCommand {
                 bootstrap_info: None,
                 state_info: Some(state_value),
                 genesis_info: None,
             }) {
                 Ok(_) => (),
                 Err(e) => {
-                    klave::notifier::send_string(&format!("failed to serialize state: {:?}", e));
+                    klave::notifier::send_string(&format!("failed to serialize state: {e:?}"));
                     return Err(Error::Other {
                         description: "failed to serialize state".into(),
                     });
@@ -347,7 +361,8 @@ impl<
     }
 
     fn build_verification_context(&self) -> impl ChainConsensusVerificationContext {
-        let trusted_time_ns = u64::from_str_radix(&klave::context::get("trusted_time").unwrap(), 10).unwrap();
+        let trusted_time_ns =
+            u64::from_str_radix(&klave::context::get("trusted_time").unwrap(), 10).unwrap();
         let trusted_time_secs = trusted_time_ns / 1_000_000_000;
 
         LightClientContext::new_with_config(
@@ -398,7 +413,7 @@ impl Target {
                     let bn = match u64::from_str_radix(bn, 16) {
                         Ok(bn) => bn,
                         Err(_) => {
-                            klave::notifier::send_string(&format!("unsupported format: {}", value));
+                            klave::notifier::send_string(&format!("unsupported format: {value}"));
                             anyhow::bail!("unsupported format: {}", value);
                         }
                     };

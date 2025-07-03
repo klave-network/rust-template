@@ -13,8 +13,7 @@ pub struct RequestBuilder {
 
 impl RequestBuilder {
     pub fn new(client: Client, request: Request<String>) -> RequestBuilder {
-        let builder = RequestBuilder { client, request };
-        builder
+        RequestBuilder { client, request }
     }
 
     pub fn send(self, display: bool) -> Result<Response<String>, Box<dyn std::error::Error>> {
@@ -22,5 +21,5 @@ impl RequestBuilder {
             Ok(response) => Ok(response),
             Err(e) => Err(e),
         }
-    }    
+    }
 }

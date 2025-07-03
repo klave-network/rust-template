@@ -1,32 +1,35 @@
+use crate::light_client_cli::src::{
+    cli::{Cli, Opts},
+    commands::{BlockCommand, Command, HeaderCommand, InitCommand, PersistCommand, UpdateCommand},
+};
 use serde_json::Value;
-use crate::light_client_cli::src::{cli::{Cli, Opts}, commands::{BlockCommand, Command, HeaderCommand, InitCommand, PersistCommand, UpdateCommand}};
 
 static LEDGER_TABLE: &str = "light_client";
 
-pub fn light_client_init(cmd: String){
+pub fn light_client_init(cmd: String) {
     let Ok(v) = serde_json::from_str::<Value>(&cmd) else {
-        klave::notifier::send_string(&format!("failed to parse '{}' as json", cmd));
-        return
+        klave::notifier::send_string(&format!("failed to parse '{cmd}' as json"));
+        return;
     };
 
     let network_name = match v["network_name"].as_str() {
         Some(c) => c,
         None => {
-            klave::notifier::send_string(&format!("ERROR: network not found"));
+            klave::notifier::send_string("ERROR: network not found");
             return;
         }
     };
     let beacon_endpoint = match v["beacon_endpoint"].as_str() {
         Some(c) => c,
         None => {
-            klave::notifier::send_string(&format!("ERROR: beacon_endpoint not found"));
+            klave::notifier::send_string("ERROR: beacon_endpoint not found");
             return;
         }
     };
 
     let command_line = Cli {
         opts: Opts {
-            ledger_table: String::from(format!("{}_{}", LEDGER_TABLE, network_name)),
+            ledger_table: format!("{LEDGER_TABLE}_{network_name}"),
             beacon_endpoint: String::from(beacon_endpoint),
             network: String::from(network_name),
         },
@@ -38,30 +41,30 @@ pub fn light_client_init(cmd: String){
     let _ = command_line.run();
 }
 
-pub fn light_client_persist(cmd: String){       
+pub fn light_client_persist(cmd: String) {
     let Ok(v) = serde_json::from_str::<Value>(&cmd) else {
-        klave::notifier::send_string(&format!("failed to parse '{}' as json", cmd));
-        return
+        klave::notifier::send_string(&format!("failed to parse '{cmd}' as json"));
+        return;
     };
 
     let network_name = match v["network_name"].as_str() {
         Some(c) => c,
         None => {
-            klave::notifier::send_string(&format!("ERROR: network not found"));
+            klave::notifier::send_string("ERROR: network not found");
             return;
         }
     };
     let beacon_endpoint = match v["beacon_endpoint"].as_str() {
         Some(c) => c,
         None => {
-            klave::notifier::send_string(&format!("ERROR: beacon_endpoint not found"));
+            klave::notifier::send_string("ERROR: beacon_endpoint not found");
             return;
         }
     };
 
     let command_line = Cli {
         opts: Opts {
-            ledger_table: String::from(format!("{}_{}", LEDGER_TABLE, network_name)),
+            ledger_table: format!("{LEDGER_TABLE}_{network_name}"),
             beacon_endpoint: String::from(beacon_endpoint),
             network: String::from(network_name),
         },
@@ -74,65 +77,63 @@ pub fn light_client_persist(cmd: String){
     let _ = command_line.run();
 }
 
-pub fn light_client_update(cmd: String){       
+pub fn light_client_update(cmd: String) {
     let Ok(v) = serde_json::from_str::<Value>(&cmd) else {
-        klave::notifier::send_string(&format!("failed to parse '{}' as json", cmd));
-        return
+        klave::notifier::send_string(&format!("failed to parse '{cmd}' as json"));
+        return;
     };
 
     let network_name = match v["network_name"].as_str() {
         Some(c) => c,
         None => {
-            klave::notifier::send_string(&format!("ERROR: network not found"));
+            klave::notifier::send_string("ERROR: network not found");
             return;
         }
     };
     let beacon_endpoint = match v["beacon_endpoint"].as_str() {
         Some(c) => c,
         None => {
-            klave::notifier::send_string(&format!("ERROR: beacon_endpoint not found"));
+            klave::notifier::send_string("ERROR: beacon_endpoint not found");
             return;
         }
     };
 
     let command_line = Cli {
         opts: Opts {
-            ledger_table: String::from(format!("{}_{}", LEDGER_TABLE, network_name)),
+            ledger_table: format!("{LEDGER_TABLE}_{network_name}"),
             beacon_endpoint: String::from(beacon_endpoint),
             network: String::from(network_name),
         },
-        cmd: Command::Update(UpdateCommand {
-            target: None,
-        }),
+        cmd: Command::Update(UpdateCommand { target: None }),
     };
     let _ = command_line.run();
 }
 
 //block number: u64
-pub fn light_client_update_for_block_number(cmd: String){       
+pub fn light_client_update_for_block_number(cmd: String) {
     let Ok(v) = serde_json::from_str::<Value>(&cmd) else {
-        klave::notifier::send_string(&format!("failed to parse '{}' as json", cmd));
-        return
+        klave::notifier::send_string(&format!("failed to parse '{cmd}' as json"));
+        return;
     };
 
     let network_name = match v["network_name"].as_str() {
         Some(c) => c,
         None => {
-            klave::notifier::send_string(&format!("ERROR: network not found"));
+            klave::notifier::send_string("ERROR: network not found");
             return;
         }
     };
     let beacon_endpoint = match v["beacon_endpoint"].as_str() {
         Some(c) => c,
         None => {
-            klave::notifier::send_string(&format!("ERROR: beacon_endpoint not found"));
+            klave::notifier::send_string("ERROR: beacon_endpoint not found");
             return;
         }
     };
 
     let command_line = Cli {
         opts: Opts {
-            ledger_table: String::from(format!("{}_{}", LEDGER_TABLE, network_name)),
+            ledger_table: format!("{LEDGER_TABLE}_{network_name}"),
             beacon_endpoint: String::from(beacon_endpoint),
             network: String::from(network_name),
         },
@@ -141,115 +142,119 @@ pub fn light_client_update_for_block_number(cmd: String){
                 Some(s) => match s.strip_prefix("0x") {
                     Some(s) => Some(s.to_string() + &String::from("bn")),
                     None => {
-                        klave::notifier::send_string(&format!("failed to parse '{}' as json", cmd));
-                        return                                                
-                    },
+                        klave::notifier::send_string(&format!("failed to parse '{cmd}' as json"));
+                        return;
+                    }
                 },
                 None => {
-                    klave::notifier::send_string(&format!("failed to parse '{}' as json", cmd));
-                    return
+                    klave::notifier::send_string(&format!("failed to parse '{cmd}' as json"));
+                    return;
                 }
-            }
+            },
         }),
     };
     let _ = command_line.run();
 }
 
 //period: u64
-pub fn light_client_update_for_period(cmd: String){
+pub fn light_client_update_for_period(cmd: String) {
     let Ok(v) = serde_json::from_str::<Value>(&cmd) else {
-        klave::notifier::send_string(&format!("failed to parse '{}' as json", cmd));
-        return
+        klave::notifier::send_string(&format!("failed to parse '{cmd}' as json"));
+        return;
     };
 
     let network_name = match v["network_name"].as_str() {
         Some(c) => c,
         None => {
-            klave::notifier::send_string(&format!("ERROR: network not found"));
+            klave::notifier::send_string("ERROR: network not found");
             return;
         }
     };
     let beacon_endpoint = match v["beacon_endpoint"].as_str() {
         Some(c) => c,
         None => {
-            klave::notifier::send_string(&format!("ERROR: beacon_endpoint not found"));
+            klave::notifier::send_string("ERROR: beacon_endpoint not found");
             return;
         }
     };
 
     let command_line = Cli {
         opts: Opts {
-            ledger_table: String::from(format!("{}_{}", LEDGER_TABLE, network_name)),
+            ledger_table: format!("{LEDGER_TABLE}_{network_name}"),
             beacon_endpoint: String::from(beacon_endpoint),
             network: String::from(network_name),
         },
         cmd: Command::Update(UpdateCommand {
-            target: v["period"].as_str().map(|s| s.to_string() + &String::from("period"))
+            target: v["period"]
+                .as_str()
+                .map(|s| s.to_string() + &String::from("period")),
         }),
     };
     let _ = command_line.run();
 }
 
 //slot: u64
-pub fn light_client_update_for_slot(cmd: String){
+pub fn light_client_update_for_slot(cmd: String) {
     let Ok(v) = serde_json::from_str::<Value>(&cmd) else {
-        klave::notifier::send_string(&format!("failed to parse '{}' as json", cmd));
-        return
+        klave::notifier::send_string(&format!("failed to parse '{cmd}' as json"));
+        return;
     };
 
     let network_name = match v["network_name"].as_str() {
         Some(c) => c,
         None => {
-            klave::notifier::send_string(&format!("ERROR: network not found"));
+            klave::notifier::send_string("ERROR: network not found");
             return;
         }
     };
     let beacon_endpoint = match v["beacon_endpoint"].as_str() {
         Some(c) => c,
         None => {
-            klave::notifier::send_string(&format!("ERROR: beacon_endpoint not found"));
+            klave::notifier::send_string("ERROR: beacon_endpoint not found");
             return;
         }
     };
 
     let command_line = Cli {
         opts: Opts {
-            ledger_table: String::from(format!("{}_{}", LEDGER_TABLE, network_name)),
+            ledger_table: format!("{LEDGER_TABLE}_{network_name}"),
             beacon_endpoint: String::from(beacon_endpoint),
             network: String::from(network_name),
         },
         cmd: Command::Update(UpdateCommand {
-            target: v["slot"].as_str().map(|s| s.to_string() + &String::from("slot"))
+            target: v["slot"]
+                .as_str()
+                .map(|s| s.to_string() + &String::from("slot")),
         }),
     };
     let _ = command_line.run();
 }
 
 //slot: u64
-pub fn light_client_fetch_header_from_slot(cmd: String){       
+pub fn light_client_fetch_header_from_slot(cmd: String) {
     let Ok(v) = serde_json::from_str::<Value>(&cmd) else {
-        klave::notifier::send_string(&format!("failed to parse '{}' as json", cmd));
-        return
+        klave::notifier::send_string(&format!("failed to parse '{cmd}' as json"));
+        return;
     };
 
     let network_name = match v["network_name"].as_str() {
         Some(c) => c,
         None => {
-            klave::notifier::send_string(&format!("ERROR: network not found"));
+            klave::notifier::send_string("ERROR: network not found");
             return;
         }
     };
     let beacon_endpoint = match v["beacon_endpoint"].as_str() {
         Some(c) => c,
         None => {
-            klave::notifier::send_string(&format!("ERROR: beacon_endpoint not found"));
+            klave::notifier::send_string("ERROR: beacon_endpoint not found");
             return;
         }
     };
 
     let command_line = Cli {
         opts: Opts {
-            ledger_table: String::from(format!("{}_{}", LEDGER_TABLE, network_name)),
+            ledger_table: format!("{LEDGER_TABLE}_{network_name}"),
             beacon_endpoint: String::from(beacon_endpoint),
             network: String::from(network_name),
         },
@@ -261,30 +266,30 @@ pub fn light_client_fetch_header_from_slot(cmd: String){
 }
 
 //slot: u64
-pub fn light_client_fetch_block_from_slot(cmd: String){       
+pub fn light_client_fetch_block_from_slot(cmd: String) {
     let Ok(v) = serde_json::from_str::<Value>(&cmd) else {
-        klave::notifier::send_string(&format!("failed to parse '{}' as json", cmd));
-        return
+        klave::notifier::send_string(&format!("failed to parse '{cmd}' as json"));
+        return;
     };
 
     let network_name = match v["network_name"].as_str() {
         Some(c) => c,
         None => {
-            klave::notifier::send_string(&format!("ERROR: network not found"));
+            klave::notifier::send_string("ERROR: network not found");
             return;
         }
     };
     let beacon_endpoint = match v["beacon_endpoint"].as_str() {
         Some(c) => c,
         None => {
-            klave::notifier::send_string(&format!("ERROR: beacon_endpoint not found"));
+            klave::notifier::send_string("ERROR: beacon_endpoint not found");
             return;
         }
     };
 
     let command_line = Cli {
         opts: Opts {
-            ledger_table: String::from(format!("{}_{}", LEDGER_TABLE, network_name)),
+            ledger_table: format!("{LEDGER_TABLE}_{network_name}"),
             beacon_endpoint: String::from(beacon_endpoint),
             network: String::from(network_name),
         },

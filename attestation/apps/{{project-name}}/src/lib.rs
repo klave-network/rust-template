@@ -16,13 +16,12 @@ impl Guest for Component {
     fn get_quote_binary(cmd: String) {
         let Ok(challenge) = klave::crypto::random::get_random_bytes(64) else {
             klave::notifier::send_string(&format!(
-                "failed to get random bytes for challenge: '{}'",
-                cmd
+                "failed to get random bytes for challenge: '{cmd}'"
             ));
             return;
         };
         let Ok(quote) = klave::attestation::get_quote(&challenge) else {
-            klave::notifier::send_string(&format!("failed to get quote: '{}'", cmd));
+            klave::notifier::send_string(&format!("failed to get quote: '{cmd}'"));
             return;
         };
 
@@ -33,7 +32,7 @@ impl Guest for Component {
 
     fn verify_quote(cmd: String) {
         let Ok(v) = serde_json::from_str::<Value>(&cmd) else {
-            klave::notifier::send_string(&format!("failed to parse '{}' as json", cmd));
+            klave::notifier::send_string(&format!("failed to parse '{cmd}' as json"));
             return;
         };
 
@@ -59,7 +58,7 @@ impl Guest for Component {
         let quote_verification = match klave::attestation::verify_quote(&quote, current_time) {
             Ok(v) => v,
             Err(e) => {
-                klave::notifier::send_string(&format!("Failed to verify quote: {}", e));
+                klave::notifier::send_string(&format!("Failed to verify quote: {e}"));
                 return;
             }
         };
@@ -69,7 +68,7 @@ impl Guest for Component {
 
     fn parse_quote(cmd: String) {
         let Ok(quote) = serde_json::from_str::<Value>(&cmd) else {
-            klave::notifier::send_string(&format!("failed to parse '{}' as json", cmd));
+            klave::notifier::send_string(&format!("failed to parse '{cmd}' as json"));
             return;
         };
         let Some(quote) = quote
@@ -88,7 +87,7 @@ impl Guest for Component {
         let parsed_quote = match klave::attestation::parse_quote(&quote) {
             Ok(q) => q,
             Err(e) => {
-                klave::notifier::send_string(&format!("Failed to parse quote: {}", e));
+                klave::notifier::send_string(&format!("Failed to parse quote: {e}"));
                 return;
             }
         };

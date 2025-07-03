@@ -7,11 +7,11 @@ use super::types::{
 use crate::consensus::src::beacon::Slot;
 use crate::consensus::src::sync_protocol::SyncCommitteePeriod;
 use crate::consensus::src::types::H256;
-use log::debug;
-use url::Url;
-use serde::de::DeserializeOwned;
 use crate::klave_client::src::client::Client as KlaveClient;
 use http;
+use log::debug;
+use serde::de::DeserializeOwned;
+use url::Url;
 
 type Result<T> = core::result::Result<T, Error>;
 
@@ -51,23 +51,19 @@ impl RPCClient {
     }
 
     pub fn get_beacon_block_root(&self, slot: Slot) -> Result<BeaconBlockRootResponse> {
-        self.request_get(format!("/eth/v1/beacon/blocks/{}/root", slot), None)
-            
+        self.request_get(format!("/eth/v1/beacon/blocks/{slot}/root"), None)
     }
 
     pub fn get_beacon_header_by_slot(&self, slot: Slot) -> Result<BeaconHeaderResponse> {
-        self.request_get(format!("/eth/v1/beacon/headers/{}", slot), None)
-            
+        self.request_get(format!("/eth/v1/beacon/headers/{slot}"), None)
     }
 
     pub fn get_beacon_block_by_slot(&self, slot: Slot) -> Result<BeaconBlockResponse> {
-        self.request_get(format!("/eth/v2/beacon/blocks/{}", slot), None)
-            
+        self.request_get(format!("/eth/v2/beacon/blocks/{slot}"), None)
     }
 
     pub fn get_finality_checkpoints(&self) -> Result<FinalityCheckpointsResponse> {
         self.request_get("/eth/v1/beacon/states/head/finality_checkpoints", None)
-            
     }
 
     // Light Client API
@@ -86,7 +82,6 @@ impl RPCClient {
         >,
     > {
         self.request_get("/eth/v1/beacon/light_client/finality_update", None)
-            
     }
 
     pub fn get_bootstrap<
@@ -103,11 +98,10 @@ impl RPCClient {
             MAX_EXTRA_DATA_BYTES,
         >,
     > {
-        self.request_get(format!(
-            "/eth/v1/beacon/light_client/bootstrap/0x{}",
-            finalized_root
-        ), None)
-        
+        self.request_get(
+            format!("/eth/v1/beacon/light_client/bootstrap/0x{finalized_root}"),
+            None,
+        )
     }
 
     pub fn get_light_client_updates<
@@ -123,12 +117,12 @@ impl RPCClient {
     > {
         let count = if count < 1 { 1 } else { count };
         for c in (1..=count).rev() {
-            let res = self
-                .request_get(format!(
-                    "/eth/v1/beacon/light_client/updates?start_period={}&count={}",
-                    start_period, c
-                ), None)
-                ;
+            let res = self.request_get(
+                format!(
+                    "/eth/v1/beacon/light_client/updates?start_period={start_period}&count={c}"
+                ),
+                None,
+            );
             if res.is_ok()
                 || !res
                     .as_ref()
@@ -155,22 +149,27 @@ impl RPCClient {
         LightClientUpdatesResponse<SYNC_COMMITTEE_SIZE, BYTES_PER_LOGS_BLOOM, MAX_EXTRA_DATA_BYTES>,
     > {
         let count = if count < 1 { 1 } else { count };
-        self.request_get(format!(
-            "/eth/v1/beacon/light_client/updates?start_period={}&count={}",
-            start_period, count
-        ), None)
-        
+        self.request_get(
+            format!(
+                "/eth/v1/beacon/light_client/updates?start_period={start_period}&count={count}"
+            ),
+            None,
+        )
     }
 
     // Helper functions
-    fn request_get<T: DeserializeOwned>(&self, path: impl Into<String>, display: Option<bool>) -> Result<T> {
+    fn request_get<T: DeserializeOwned>(
+        &self,
+        path: impl Into<String>,
+        display: Option<bool>,
+    ) -> Result<T> {
         let url_str = format!("{}{}", self.endpoint, path.into());
-        debug!("request_get: url={}", url_str);        
+        debug!("request_get: url={url_str}");
         let url = match Url::parse(url_str.as_str()) {
             Ok(url) => url,
             Err(e) => {
                 return Err(Error::Other {
-                    description: format!("{}, {}", e.to_string(), url_str),
+                    description: format!("{e}, {url_str}"),
                 });
             }
         };
@@ -178,18 +177,20 @@ impl RPCClient {
             Ok(res) => res,
             Err(e) => {
                 return Err(Error::Other {
-                    description: format!("{}, {}", e.to_string(), url_str),
+                    description: format!("{e}, {url_str}"),
                 });
             }
         };
         match res.status() {
             http::StatusCode::OK => {
                 let bytes = res.body().as_bytes();
-                debug!("request_get: response={}", String::from_utf8_lossy(&bytes));
-                Ok(serde_json::from_slice(&bytes).map_err(Error::JSONDecodeError)?)
+                debug!("request_get: response={}", String::from_utf8_lossy(bytes));
+                Ok(serde_json::from_slice(bytes).map_err(Error::JSONDecodeError)?)
             }
             http::StatusCode::INTERNAL_SERVER_ERROR => Err(Error::RPCInternalServerError(
-                serde_json::from_str::<InternalServerError>(res.body()).unwrap().message,
+                serde_json::from_str::<InternalServerError>(res.body())
+                    .unwrap()
+                    .message,
             )),
             _ => Err(Error::Other {
                 description: res.body().to_string(),

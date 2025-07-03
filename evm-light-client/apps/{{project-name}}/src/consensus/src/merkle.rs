@@ -1,8 +1,6 @@
 use super::{beacon::Root, errors::MerkleError, types::H256};
 use sha2::{Digest, Sha256};
 
-use klave;
-
 /// MerkleTree is a merkle tree implementation using sha256 as a hashing algorithm.
 pub type MerkleTree = rs_merkle::MerkleTree<rs_merkle::algorithms::Sha256>;
 

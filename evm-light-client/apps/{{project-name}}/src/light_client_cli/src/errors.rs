@@ -1,5 +1,5 @@
-use displaydoc::Display;
 use crate::consensus::src::sync_protocol::SyncCommitteePeriod;
+use displaydoc::Display;
 
 #[derive(Debug, Display)]
 pub enum Error {

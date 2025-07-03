@@ -1,3 +1,3 @@
-pub mod networks;
-pub mod network;
 pub mod http;
+pub mod network;
+pub mod networks;

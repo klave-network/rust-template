@@ -1,5 +1,5 @@
 use super::{
-    bls::{PublicKey, Signature},    
+    bls::{PublicKey, Signature},
     types::{serde_hex, Address, Bytes32, H256, U64},
 };
 use ssz_rs::{Bitlist, Deserialize, List, Sized, Vector};

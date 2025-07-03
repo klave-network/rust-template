@@ -280,7 +280,7 @@ impl<const N: usize> DerefMut for ByteList<N> {
     }
 }
 
-pub mod serde_hex {    
+pub mod serde_hex {
     use serde::de::Deserialize;
     pub fn serialize<S, T: AsRef<[u8]>>(data: &T, serializer: S) -> Result<S::Ok, S::Error>
     where

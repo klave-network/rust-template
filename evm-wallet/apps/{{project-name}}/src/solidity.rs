@@ -5,4 +5,4 @@ sol! {
     function burn(address to, uint256 amount) external;
     function pause() external;
     function unpause() external;
-}        
+}
