@@ -1,0 +1,14 @@
+{
+  "version": "1",
+  "branches": [
+    "*"
+  ],
+  "applications": [
+    {
+      "name": "{{project-name}}",
+      "description": "EVM-compatible multi-chain wallet for Klave",
+      "version": "0.1.0",
+      "rootDir": "/apps/{{project-name}}"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+package component:{{component_name}};
+
+/// An example world for the component to target.
+world {{component_name}} {
+    export register-routes: func();
+    export network-add: func(cmd: string);
+    export network-set-chain-id: func(cmd: string);
+    export network-set-gas-price: func(cmd: string);    
+    export networks-all: func(cmd: string);
+    export eth-block-number: func(cmd: string);
+    export eth-get-block-by-number: func(cmd: string);
+    export eth-gas-price: func(cmd: string);
+    export eth-estimate-gas: func(cmd: string);
+    export eth-call-contract: func(cmd: string);
+    export eth-protocol-version: func(cmd: string);
+    export eth-chain-id: func(cmd: string);
+    export eth-get-transaction-by-hash: func(cmd: string);
+    export eth-get-transaction-receipt: func(cmd: string);
+    export eth-get-transaction-count: func(cmd: string);
+    export web-client-version: func(cmd: string);
+    export web-sha3: func(cmd: string);
+    export net-version: func(cmd: string);
+    export get-sender: func(cmd: string);
+    export get-trusted-time: func(cmd: string);
+}

@@ -1,0 +1,19 @@
+package component:{{component_name}};
+
+/// An example world for the component to target.
+world {{component_name}} {
+    export register-routes: func();
+    export network-add: func(cmd: string);
+    export network-set-chain-id: func(cmd: string);
+    export network-set-gas-price: func(cmd: string);    
+    export networks-all: func(cmd: string);
+    export wallet-add: func(cmd: string);    
+    export wallet-add-network: func(cmd: string);
+    export wallet-address: func(cmd: string);   
+    export wallet-public-key: func(cmd: string);    
+    export wallet-balance: func(cmd: string);
+    export wallet-networks: func(cmd: string);
+    export wallet-transfer: func(cmd: string); 
+    export wallet-deploy-contract: func(cmd: string);   
+    export wallet-call-contract: func(cmd: string);
+}
