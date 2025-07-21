@@ -1,0 +1,14 @@
+{
+  "version": "1",
+  "branches": [
+    "*"
+  ],
+  "applications": [
+    {
+      "name": "evm-light-client",
+      "description": "A light client for Ethereum",
+      "version": "0.1.0",
+      "rootDir": "/apps/{{project-name}}"
+    }
+  ]
+}

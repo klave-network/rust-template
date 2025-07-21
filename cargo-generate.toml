@@ -1,2 +1,2 @@
-[hooks]
-pre = ["pre-script.rhai"]
+[template]
+sub_templates = ["ledger", "attestation", "musig2", "evm-wallet", "evm-light-client", "postgre"]

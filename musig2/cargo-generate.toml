@@ -1,0 +1,6 @@
+[hooks]
+pre = ["pre-script.rhai"]
+
+[template]
+cargo_generate_version = ">=0.23.4"
+exclude = ["*.png", "*.ico", "LICENSE.md"]
