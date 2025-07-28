@@ -1,0 +1,21 @@
+[package]
+name = "{{project-name}}"
+version = "0.1.0"
+authors = ["{{authors}}"]
+edition = "2021"
+description = "Klave PostGreDB"
+
+[dependencies]
+wit-bindgen-rt = { version = "0.42.1", features = ["bitflags"] }
+component = "0.1.1"
+klave = "0.4.0"
+serde_json = "1.0.140"
+serde = { version = "1.0.140", features = ["derive"] }
+hex = "0.4.3"
+base64 = "0.22.1"
+
+[lib]
+crate-type = ["cdylib"]
+
+[package.metadata.component]
+package = "component:{{component_name}}"

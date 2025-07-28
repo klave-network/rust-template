@@ -1,0 +1,12 @@
+package component:{{component_name}};
+
+/// An example world for the component to target.
+world {{component_name}} {
+    export register-routes: func();
+
+    export db-setup: func(cmd: string);
+    export execute-table-encryption: func(cmd: string);
+    export read-encrypted-data-per-user: func(cmd: string);
+    export avg-age-for-male: func(cmd: string);
+    export avg-age-for-female: func(cmd: string);
+}

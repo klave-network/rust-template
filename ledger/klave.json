@@ -1,0 +1,14 @@
+{
+  "version": "1",
+  "branches": [
+    "*"
+  ],
+  "applications": [
+    {
+      "name": "{{project-name}}",
+      "description": "A Rust component template for Klave",
+      "version": "0.1.0",
+      "rootDir": "/apps/{{project-name}}"
+    }
+  ]
+}

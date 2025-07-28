@@ -1,0 +1,9 @@
+package component:{{component_name}};
+
+/// An example world for the component to target.
+world {{component_name}} {
+    export register-routes: func();
+    export get-quote-binary: func(cmd: string);
+    export verify-quote: func(cmd: string);
+    export parse-quote: func(cmd: string);
+}

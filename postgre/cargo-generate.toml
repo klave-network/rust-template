@@ -1,0 +1,5 @@
+[hooks]
+pre = ["pre-script.rhai"]
+
+[template]
+exclude = ["sql-example/*", "LICENSE.md"]

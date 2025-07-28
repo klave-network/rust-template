@@ -1,0 +1,1 @@
+import{j as s}from"./index-BbTZgOPh.js";import{c as t}from"./button-BHCxSF1w.js";const x=({children:o,className:r})=>s.jsx("div",{className:t("w-full mx-auto max-w-7xl px-4",r),children:o});export{x as C};
