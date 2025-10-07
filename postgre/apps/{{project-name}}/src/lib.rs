@@ -65,14 +65,14 @@ impl Guest for Component {
                     return;
                 }
             };
-        match client.connect() {
-            Ok(_) => (),
+        let conn = match client.connect() {
+            Ok(c) => c,
             Err(err) => {
                 klave::notifier::send_string(&format!("Failed to connect to client: {err}"));
                 return;
             }
         };
-        match client.encrypt_columns(db_table) {
+        match client.encrypt_columns(&conn, db_table) {
             Ok(_) => (),
             Err(err) => {
                 klave::notifier::send_string(&format!("Failed to encrypt columns: {err}"));
