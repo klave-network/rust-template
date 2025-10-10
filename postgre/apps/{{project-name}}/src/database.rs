@@ -1,4 +1,4 @@
-use klave::crypto::subtle::save_key;
+use klave::{crypto::subtle::save_key, postgresql::Connection};
 use serde::{Deserialize, Serialize};
 use serde_json::{self, Value};
 
@@ -172,7 +172,6 @@ impl Clients {
 pub struct Client {
     database_id: String,
     db_input_details: DBInputDetails,
-    opaque_handle: String,
     master_key_name: Option<String>, // Optional field for master key name
 }
 
@@ -230,13 +229,8 @@ impl Client {
         Self {
             database_id,
             db_input_details,
-            opaque_handle: String::new(),
             master_key_name: None,
         }
-    }
-
-    pub fn get_handle(&self) -> &str {
-        &self.opaque_handle
     }
 
     // Loads a Client instance from the ledger using the database ID.
@@ -298,31 +292,24 @@ impl Client {
 
     // Constructs the PostgreSQL connection string from the DBInputDetails
     fn connection_string(&self) -> String {
-        let mut conn_str = format!(
-            "host={} dbname={}",
-            self.db_input_details.host, self.db_input_details.dbname
+        let conn_str = Connection::connection_string(
+            self.db_input_details.host.as_str(),
+            self.db_input_details.dbname.as_str(),
+            self.db_input_details.user.as_str(),
+            self.db_input_details.password.as_str()
         );
-        if !self.db_input_details.user.is_empty() {
-            conn_str.push_str(&format!(" user={}", self.db_input_details.user));
-        }
-        if !self.db_input_details.password.is_empty() {
-            conn_str.push_str(&format!(" password={}", self.db_input_details.password));
-        }
         conn_str
     }
 
     // Connects to the PostgreSQL database using the connection string
     // and stores the opaque handle for further operations.
-    pub fn connect(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn connect(&mut self) -> Result<Connection, Box<dyn std::error::Error>> {
         // Construct the PostgreSQL connection URI
         let uri = self.connection_string();
 
         // Open the PostgreSQL connection
-        match klave::sql::connection_open(&uri) {
-            Ok(opaque_handle) => {
-                self.opaque_handle = opaque_handle;
-                Ok(())
-            }
+        match klave::postgresql::Connection::open(&uri) {
+            Ok(connection) => Ok(connection),
             Err(err) => {
                 klave::notifier::send_string(&format!("Failed to connect to PostgreSQL: {err}"));
                 Err(err)
@@ -331,11 +318,11 @@ impl Client {
     }
 
     // Queries the PostgreSQL database using the provided SQL query, returns a PostGreResponse.
-    pub fn query<T>(&self, query: &str) -> Result<PostGreResponse<T>, Box<dyn std::error::Error>>
+    pub fn query<T>(&mut self, conn: &Connection, query: &str) -> Result<PostGreResponse<T>, Box<dyn std::error::Error>>
     where
         T: for<'de> serde::Deserialize<'de>,
     {
-        match klave::sql::query(&self.opaque_handle, query) {
+        match conn.query(query) {
             Ok(result) => {
                 let response = match serde_json::from_str::<PostGreResponse<T>>(&result) {
                     Ok(res) => res,
@@ -354,8 +341,8 @@ impl Client {
     }
 
     // Executes a SQL command on the PostgreSQL database, returns the result as a String.
-    pub fn execute(&self, query: &str) -> Result<String, Box<dyn std::error::Error>> {
-        match klave::sql::execute(&self.opaque_handle, query) {
+    pub fn execute(&mut self, conn: &Connection, query: &str) -> Result<String, Box<dyn std::error::Error>> {
+        match conn.execute(query) {
             Ok(result) => Ok(result),
             Err(err) => {
                 klave::notifier::send_string(&format!("Execution failed: {err}"));
@@ -365,10 +352,10 @@ impl Client {
     }
 
     // Encrypts the specified columns in the given DBTable.
-    pub fn encrypt_columns(&mut self, db_table: DBTable) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn encrypt_columns(&mut self, conn: Connection, db_table: DBTable) -> Result<(), Box<dyn std::error::Error>> {
         //for each column name, I retrieve both primary key + data associated to the column to encrypt
         for column in db_table.columns.clone() {
-            match self.encrypt_single_column(column.clone(), &db_table) {
+            match self.encrypt_single_column(&conn, column.clone(), &db_table) {
                 Ok(_) => (),
                 Err(err) => {
                     klave::notifier::send_string(&format!(
@@ -384,6 +371,7 @@ impl Client {
 
     fn encrypt_single_column(
         &mut self,
+        conn: &Connection,
         column: String,
         db_table: &DBTable,
     ) -> Result<(), Box<dyn std::error::Error>> {
@@ -392,7 +380,7 @@ impl Client {
 
         // Retrieve the primary key index and the columns to encrypt
         let answer: PostGreResponse<Vec<Vec<Value>>> =
-            match self.get_column_to_encrypt(&db_table.primary_key, db_table, &column) {
+            match self.get_column_to_encrypt(&conn, &db_table.primary_key, db_table, &column) {
                 Ok(column) => column,
                 Err(err) => {
                     klave::notifier::send_string(&format!(
@@ -447,6 +435,7 @@ impl Client {
         }
 
         match self.update(
+            conn,
             processed_rows,
             answer.fields.clone(),
             table_name.clone(),
@@ -468,7 +457,8 @@ impl Client {
     }
 
     fn get_column_to_encrypt(
-        &self,
+        &mut self,
+        conn: &Connection,
         primary_key_field: &String,
         db_table: &DBTable,
         column: &String,
@@ -478,7 +468,7 @@ impl Client {
             "SELECT {},{} FROM {} ORDER BY {}",
             primary_key_field, column, db_table.table, primary_key_field
         );
-        let result = match self.query::<Vec<Vec<Value>>>(&query) {
+        let result = match self.query::<Vec<Vec<Value>>>(conn, &query) {
             Ok(response) => response,
             Err(err) => {
                 klave::notifier::send_string(&format!(
@@ -491,7 +481,8 @@ impl Client {
     }
 
     fn update(
-        &self,
+        &mut self,
+        conn: &Connection,
         processed_rows: Vec<Vec<Value>>,
         fields: Vec<Field>,
         table: String,
@@ -501,7 +492,7 @@ impl Client {
         if processed_rows.len() <= chunk_size {
             let query = self.build_update_query(processed_rows.clone(), fields, table.clone())?;
             // Execute the update
-            match self.execute(&query) {
+            match self.execute(conn, &query) {
                 Ok(_) => {
                     klave::notifier::send_string(&format!(
                         "Column {column_name} of table {table} has been encrypted"
@@ -522,7 +513,7 @@ impl Client {
                     table.clone(),
                 )?;
                 // Execute the update
-                match self.execute(&query) {
+                match self.execute(conn, &query) {
                     Ok(_) => {
                         klave::notifier::send_string(&format!(
                             "Chunk {i} of column {column_name} of table {table} has been encrypted"
@@ -542,7 +533,7 @@ impl Client {
                     table.clone(),
                 )?;
                 // Execute the update
-                match self.execute(&query) {
+                match self.execute(conn, &query) {
                     Ok(_) => {
                         klave::notifier::send_string(&format!("Last chunk {division_by_chunk} of column {column_name} of table {table} has been encrypted"));
                     }

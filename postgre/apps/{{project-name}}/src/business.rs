@@ -1,3 +1,4 @@
+use klave::postgresql::Connection;
 use serde_json::Value;
 
 use crate::database::{self, EncryptedQueryWithEncryptedUser};
@@ -19,8 +20,8 @@ pub fn read_encrypted_data_per_user(cmd: String) {
     };
 
     // Connect to the DB and establish a handle
-    match client.connect() {
-        Ok(_) => (),
+    let conn: Connection = match client.connect() {
+        Ok(c) => c,
         Err(err) => {
             klave::notifier::send_string(&format!("Failed to connect to client: {err}"));
             return;
@@ -37,7 +38,7 @@ pub fn read_encrypted_data_per_user(cmd: String) {
         }
     };
 
-    let mut result = match client.query::<Vec<Vec<Value>>>(&query.query) {
+    let mut result = match client.query::<Vec<Vec<Value>>>(&conn, &query.query) {
         Ok(res) => res,
         Err(err) => {
             klave::notifier::send_string(&format!("Failed to query the DB: {err}"));
@@ -96,8 +97,8 @@ pub fn avg_age_for_male(cmd: String) {
     };
 
     // Connect to the DB and establish a handle
-    match client.connect() {
-        Ok(_) => (),
+    let conn = match client.connect() {
+        Ok(c) => c,
         Err(err) => {
             klave::notifier::send_string(&format!("Failed to connect to client: {err}"));
             return;
@@ -114,7 +115,7 @@ pub fn avg_age_for_male(cmd: String) {
     };
 
     // Run query
-    match client.query::<Vec<Vec<Value>>>(&query) {
+    match client.query::<Vec<Vec<Value>>>(&conn, &query) {
         Ok(res) => {
             let _ = klave::notifier::send_json(&res);
         }
@@ -141,8 +142,8 @@ pub fn avg_age_for_female(cmd: String) {
     };
 
     // Connect to the DB and establish a handle
-    match client.connect() {
-        Ok(_) => (),
+    let conn = match client.connect() {
+        Ok(c) => c,
         Err(err) => {
             klave::notifier::send_string(&format!("Failed to connect to client: {err}"));
             return;
@@ -159,7 +160,7 @@ pub fn avg_age_for_female(cmd: String) {
     };
 
     // Run query
-    match client.query::<Vec<Vec<Value>>>(&query) {
+    match client.query::<Vec<Vec<Value>>>(&conn, &query) {
         Ok(res) => {
             let _ = klave::notifier::send_json(&res);
         }
